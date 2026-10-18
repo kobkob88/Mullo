@@ -1,0 +1,998 @@
+/* ── Design tokens ─────────────────────────────────────────────────────
+   All styling lives in this file. No style="" anywhere: the CSP has no
+   'unsafe-inline' for styles, and the tests keep it that way.
+   Built for one hand, outdoors: tap targets ≥ 48px, high contrast.
+   The installed shell wears the dark theme colour (manifest + meta);
+   the page itself follows the system setting. */
+:root {
+  /* True black (OLED): the page is black, cards are neutral greys, no blue tint. */
+  --bg: #000000;
+  --surface: #1a1a1a;
+  --surface-2: #262626;
+  --line: #303030;
+  --text: #f2f2f2;
+  --muted: #9c9c9c;
+  /* Mullo's pink (the mascot's body) is the app's colour (owner, 2026-10-10; was blue). */
+  --accent: #F4A3B6;
+  --accent-ink: #3A1424;
+  --rec: #ff4d5e;
+  --rec-text: #ff6b78; /* the record red as text (darker on the light theme) */
+  --ok: #3ccf8e;
+  --warn: #ffb547;
+  --alert: #ff6b6b;
+  --pocket: #b18cff;
+  --vocci: #43d1c4;
+  --plaud: #ffb547;
+  --device: #5fb3ff;
+
+  --radius: 14px;
+  --radius-sm: 9px;
+  --gap: 12px;
+  --tap: 48px;
+  --pad: 16px;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Hebrew", "Noto Sans", sans-serif;
+  --tabbar-h: 64px;
+  /* The content column: a phone's width; on a computer, the whole window (owner, 2026-10-17). */
+  --col: 760px;
+  /* The top bar's height, fixed so a message can sit right under it (no JS sizes). */
+  --head-h: calc(52px + env(safe-area-inset-top));
+}
+
+/* Light: chosen in Settings → Appearance, or "Match system" on a light phone. */
+:root[data-theme="light"] {
+  --bg: #f5f7f9;
+  --surface: #ffffff;
+  --surface-2: #eef1f4;
+  --line: #d9dfe5;
+  --text: #12181e;
+  --muted: #5b6875;
+  --accent: #B8456A;
+  --accent-ink: #ffffff;
+  /* Darker badge colours: the dark-theme ones are too faint on white. */
+  --device: #0b6bcb; --pocket: #7a3fe0; --vocci: #0f8f84; --plaud: #a86400; --ok: #17834f; --warn: #a86400;
+  --rec-text: #c8283a;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --bg: #f5f7f9;
+    --surface: #ffffff;
+    --surface-2: #eef1f4;
+    --line: #d9dfe5;
+    --text: #12181e;
+    --muted: #5b6875;
+    --accent: #B8456A;
+    --accent-ink: #ffffff;
+    --device: #0b6bcb; --pocket: #7a3fe0; --vocci: #0f8f84; --plaud: #a86400; --ok: #17834f; --warn: #a86400;
+    --rec-text: #c8283a;
+  }
+}
+:root[data-theme="dark"] { color-scheme: dark; }
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+/* No browser-blue tap flash anywhere (owner, 2026-10-11). The press is ours, just below. */
+html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 var(--font);
+  padding-block-end: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+}
+a { color: var(--accent); }
+h1, h2, h3, p { margin: 0; }
+ul, ol { margin: 0; padding-inline-start: 1.2em; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+/* Pressed: a faint wash of the text colour, light on dark and dark on light. An inset
+   shadow sits over any background (pink buttons too) and under the text. What has its own,
+   native-looking press (Motion, at the end) is left out: a box over a task's words or a tab
+   in the bottom bar looked like a web page (owner, 2026-10-15). */
+:where(a[href], button, label, summary, .pill, [data-action]:not(input, select, textarea)):not(:disabled, .fab, .field,
+  .btn, .pill, .chip, .tab, .icon-btn, .tabbar__item, .chat-bar__open, .chat-bar__send, .action-row__main, .action-row__check,
+  .action-row__type, .action-row__due, .action-row__do, .task-draft__toggle, .conn-chip--action, .back, .rec-title__edit, .rec-card):active {
+  box-shadow: inset 0 0 0 100vmax color-mix(in srgb, var(--text) 12%, transparent);
+}
+
+.skip { position: absolute; inset-inline-start: -999px; }
+.skip:focus { inset-inline-start: var(--pad); top: var(--pad); z-index: 10; background: var(--surface); padding: 8px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.muted { color: var(--muted); }
+.small { font-size: 0.875rem; }
+.stack { display: flex; flex-direction: column; gap: var(--gap); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.row > input { flex: 1 1 12rem; }
+
+/* ── Shell ────────────────────────────────────────────────────────────── */
+.shell-head {
+  position: sticky; top: 0; z-index: 5;
+  box-sizing: border-box; min-height: var(--head-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px var(--pad);
+  padding-block-start: calc(10px + env(safe-area-inset-top));
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-block-end: 1px solid var(--line);
+}
+.shell-head__start { display: flex; align-items: baseline; gap: 14px; }
+/* Sign in beside the name: text in Mullo's pink, so the name stays the main thing (owner). */
+.head-signin { font-size: 0.9rem; font-weight: 600; color: var(--accent); text-decoration: none; }
+.head-signin:hover { text-decoration: underline; }
+.brand { font-weight: 700; font-size: 1.15rem; color: var(--text); text-decoration: none; letter-spacing: 0.02em; }
+.view { max-width: var(--col); margin: 0 auto; padding: var(--pad); padding-block-end: 96px; display: flex; flex-direction: column; gap: var(--gap); overflow-x: clip; /* a screen sliding in never widens the page */ }
+/* Every screen: title, then its blocks, evenly spaced. (Screens used to stack
+   their blocks with no gap - the search box sat on the pills, More's cards touched.) */
+.view > * { display: flex; flex-direction: column; gap: 16px; }
+.view > * > .page-head { margin-block-end: -4px; }
+.view:focus { outline: none; }
+
+.tabbar {
+  position: fixed; inset-inline: 0; bottom: 0; z-index: 5;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  min-height: var(--tabbar-h);
+  padding-block-end: env(safe-area-inset-bottom);
+  background: var(--surface);
+  border-block-start: 1px solid var(--line);
+}
+.tabbar__item {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  min-height: var(--tap);
+  color: var(--muted); text-decoration: none; font-size: 0.75rem;
+}
+.tabbar__item.is-active { color: var(--text); font-weight: 600; }
+.tabbar__icon { font-size: 1.25rem; line-height: 1; }
+/* Search and Settings are drawn: ⌕ came out small and thin on phones, ⚙ as a colour emoji on iPhone. */
+.tabbar__svg { width: 1.1em; height: 1.1em; display: block; }
+
+/* Record: one floating button, bottom right (bottom left in RTL), on every
+   screen except Record itself. Red with a white dot, so it reads as "record".
+   The dot pulses as a square while a recording runs (tap to get back to it). */
+.fab {
+  position: fixed; z-index: 6;
+  inset-inline-end: 16px;
+  bottom: calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom));
+  width: 52px; height: 52px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--rec);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.35);
+}
+.fab:active { transform: scale(0.94); }
+.fab__dot { width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+.fab.is-live .fab__dot { border-radius: 4px; animation: pulse 1.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .fab.is-live .fab__dot { animation: none; } }
+
+/* ── Mullo, the mascot ─────────────────────────────────────────────────
+   The designer's CSS (docs/brand/mascot-motion.dc.html), unchanged except:
+   the orbit's transform-origin moved from a style attribute into
+   .orbit-full, and sizes are classes. The mood is one class on .mullo. */
+.mullo { display: inline-flex; line-height: 0; flex-shrink: 0; }
+.mullo svg { width: 100%; height: auto; overflow: visible; }
+.mullo--record { width: 130px; }
+.mullo--live { width: 150px; }
+.mullo--empty { width: 140px; }
+.mullo--card { width: 64px; }
+.mullo-stage { display: flex; justify-content: center; }
+.mullo-stage--empty { margin-top: 48px; }
+.mullo-stage--empty + .empty { padding-top: 8px; }
+
+.mullo .m-body, .mullo .eye, .mullo .chew, .mullo .m-antenna, .mullo .m-bounce, .mullo .bar, .mullo .spark, .mullo .shadow { transform-box: fill-box; transform-origin: 50% 100%; }
+.mullo .eye, .mullo .chew, .mullo .bar, .mullo .spark { transform-origin: 50% 50%; }
+.mullo .orbit-full { transform-box: view-box; transform-origin: 214px 88px; }
+.mullo .v { opacity: 0; transition: opacity .18s ease; }
+.mullo .m-bub { opacity: 0; }
+.mullo .spark { opacity: 0; }
+.st-idle .v-open, .st-idle .v-smile,
+.st-listening .v-open, .st-listening .v-o,
+.st-mulling .v-closed, .st-mulling .v-chew,
+.st-ready .v-closed, .st-ready .v-big,
+.st-silent .v-open, .st-silent .v-flat, .st-silent .v-dots,
+.st-offline .v-half, .st-offline .v-flat { opacity: 1; }
+@keyframes mBreathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.02, .975); } }
+@keyframes mTalk { 0%, 100% { transform: scale(1, 1); } 30% { transform: scale(1.035, .955); } 60% { transform: scale(.985, 1.02); } }
+@keyframes mBlink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.08); } }
+@keyframes mSway { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+@keyframes mRise { 0% { transform: translate(0, 0) scale(.3); opacity: 0; } 15% { opacity: .9; } 100% { transform: translate(46px, -120px) scale(1.1); opacity: 0; } }
+@keyframes mOrbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes mChew { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(.35); } }
+@keyframes mBar { 0%, 100% { transform: scaleY(.35); } 50% { transform: scaleY(1); } }
+@keyframes mHop { 0%, 40%, 100% { transform: translateY(0); } 12% { transform: translateY(-28px); } 24% { transform: translateY(0); } 31% { transform: translateY(-8px); } }
+@keyframes mShadow { 0%, 40%, 100% { transform: scaleX(1); opacity: .3; } 12% { transform: scaleX(.7); opacity: .15; } }
+@keyframes mPop { 0%, 100% { transform: scale(0); opacity: 0; } 15% { transform: scale(1.2); opacity: 1; } 40% { transform: scale(1); opacity: 1; } 60% { transform: scale(0); opacity: 0; } }
+@keyframes mLook { 0%, 20%, 100% { transform: translateX(0); } 35%, 50% { transform: translateX(-5px); } 65%, 80% { transform: translateX(5px); } }
+@keyframes mDots { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+.mullo .m-body { animation: mBreathe 3.2s ease-in-out infinite; }
+.mullo .eye { animation: mBlink 4.4s infinite; }
+.mullo .m-antenna { animation: mSway 3.6s ease-in-out infinite; }
+.mullo .bar { opacity: .35; }
+.st-listening .m-body { animation: mTalk .5s ease-in-out infinite; }
+.st-listening .m-antenna { animation: mSway 1s ease-in-out infinite; }
+.st-listening .m-bub { animation: mRise 1.8s ease-out infinite; }
+.st-listening .m-bub.b2 { animation-delay: .6s; }
+.st-listening .m-bub.b3 { animation-delay: 1.2s; }
+.st-listening .bar { opacity: 1; animation: mBar .6s ease-in-out infinite; }
+.st-listening .bar.d1 { animation-delay: .1s; }
+.st-listening .bar.d2 { animation-delay: .25s; }
+.st-listening .bar.d3 { animation-delay: .4s; }
+.st-listening .bar.d4 { animation-delay: .15s; }
+.st-mulling .m-orbit { animation: mOrbit 2.6s linear infinite; }
+.st-mulling .m-orbit .m-bub { opacity: .8; }
+.st-mulling .chew { animation: mChew .38s ease-in-out infinite; }
+.st-mulling .m-body { animation: mBreathe 1.4s ease-in-out infinite; }
+.st-mulling .bar { opacity: .6; animation: mBar 1.8s ease-in-out infinite; }
+.st-ready .m-bounce { animation: mHop 2.2s ease-out infinite; }
+.st-ready .shadow { animation: mShadow 2.2s ease-out infinite; }
+.st-ready .spark { animation: mPop 2.2s ease-out infinite; }
+.st-ready .spark.s2 { animation-delay: .12s; }
+.st-ready .spark.s3 { animation-delay: .24s; }
+.st-ready .bar { opacity: 1; }
+.st-silent .pupil { animation: mLook 2.8s ease-in-out infinite; }
+.st-silent .v-dots circle { animation: mDots 1.2s ease-in-out infinite; }
+.st-silent .v-dots circle:nth-child(2) { animation-delay: .2s; }
+.st-silent .v-dots circle:nth-child(3) { animation-delay: .4s; }
+.st-offline .m-antenna { animation: none; transform: rotate(38deg); }
+.st-offline .m-body { animation: mBreathe 5s ease-in-out infinite; }
+.st-offline .tip { fill: #6B7F82; }
+.st-offline .bar { opacity: .12; }
+@media (prefers-reduced-motion: reduce) { .mullo * { animation: none !important; } }
+
+/* The slim card on top of the Library: Mulling it over / Ready / No speech / Offline. */
+.mood-card { display: flex; align-items: center; gap: 10px; padding: 4px 14px 4px 4px; color: var(--text); text-decoration: none; margin-bottom: var(--gap); }
+.mood-card--ready { border-color: var(--accent); }
+.mood-card__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mood-card__title { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mood-card__line { color: var(--muted); font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.pending { font-size: 0.8rem; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); }
+.pending--warn { background: color-mix(in srgb, var(--warn) 25%, var(--surface-2)); }
+.pending--alert { background: var(--alert); color: #fff; }
+
+/* A message drops down from under the top bar, attached to it (owner, 2026-10-15: floating
+   mid-screen it looked stuck there for no reason). Only for what the screen can't show. */
+.toast {
+  position: fixed; inset-inline: 0; top: var(--head-h); z-index: 32;
+  max-width: var(--col); margin-inline: auto;
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px var(--pad);
+  background: var(--surface-2); border-block-end: 1px solid var(--line);
+  box-shadow: 0 10px 24px rgb(0 0 0 / 0.35);
+  font-size: 0.92rem; cursor: pointer;
+}
+.toast[hidden] { display: none; }
+.toast__icon {
+  flex: none; width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--accent); color: var(--accent-ink); font-size: 0.75rem; font-weight: 800;
+}
+.toast.is-error .toast__icon { background: var(--alert); }
+.toast__text { min-width: 0; overflow-wrap: anywhere; }
+.toast.is-in { animation: toastIn 0.22s ease-out; }
+.toast.is-out { animation: toastOut 0.18s ease-in forwards; }
+@keyframes toastIn { from { transform: translateY(-100%); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes toastOut { to { transform: translateY(-100%); opacity: 0; } }
+
+/* ── Building blocks ──────────────────────────────────────────────────── */
+.page-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--gap); }
+.page-head__title { font-size: 1.6rem; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--pad); }
+.card.is-alert { border-color: var(--alert); }
+.card__title { font-size: 1.05rem; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: var(--tap); padding: 0 18px;
+  border-radius: var(--radius-sm); border: 1px solid var(--line);
+  background: var(--surface-2); color: var(--text);
+  text-decoration: none; cursor: pointer; font-weight: 600;
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn--primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn--ghost { background: transparent; }
+.btn--danger { color: var(--alert); border-color: color-mix(in srgb, var(--alert) 50%, var(--line)); }
+.btn--danger:not(.btn--ghost) { background: var(--alert); color: #fff; }
+.btn--small { min-height: 36px; padding: 0 12px; font-size: 0.875rem; }
+
+input:not([type="checkbox"]):not([type="file"]), select, textarea {
+  width: 100%; min-height: var(--tap);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm); border: 1px solid var(--line);
+  background: var(--surface-2);
+}
+textarea { resize: vertical; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field__label { font-size: 0.875rem; color: var(--muted); }
+
+.pill {
+  min-height: 40px; padding: 0 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: transparent; cursor: pointer;
+}
+.pill.is-active { background: var(--text); color: var(--bg); border-color: var(--text); }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Joined notes: one player, a pill per part. */
+.parts { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.parts .pill { min-height: 34px; min-width: 34px; padding: 0 10px; }
+
+/* Library select mode: cards become tick boxes; the bar says how many. */
+.select-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; border-color: var(--accent); }
+.rec-card.rec-card--pick { flex-direction: row; align-items: center; gap: 14px; cursor: pointer; }
+.rec-card--pick.is-picked { border-color: var(--accent); }
+.select-bar--danger { border-color: var(--alert); }
+/* Long-press opens select mode, not the browser's link menu or text selection. */
+.rec-card { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+.rec-card__pick { width: 22px; height: 22px; flex: none; }
+.rec-card__body { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1; }
+
+/* A tick box with its words beside it, inside a form. */
+.format-tasks { align-items: center; gap: 10px; cursor: pointer; }
+.format-tasks input { width: 20px; height: 20px; flex: none; }
+
+/* Storage: a recording row with its own button, not a link. */
+.storage-row { cursor: default; min-height: 64px; }
+.storage-row:active { background: none; }
+.storage-row .set-row__title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.badge, .chip {
+  display: inline-flex; align-items: center;
+  font-size: 0.75rem; font-weight: 600; line-height: 1;
+  padding: 4px 8px; border-radius: 999px;
+  background: var(--surface-2); color: var(--muted);
+}
+/* Where a note came from, in Mullo's own colours (owner, 2026-10-15): the phone pink, the
+   watch red, each on a faint wash of itself. */
+.badge--device { color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.badge--watch { color: var(--rec-text); background: color-mix(in srgb, var(--rec) 14%, transparent); }
+.badge--model { margin-inline-start: 6px; color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.badge--max { margin-inline-start: 6px; color: var(--text); background: color-mix(in srgb, var(--text) 10%, transparent); }
+.set-choice.is-locked .set-row__title { opacity: 0.6; }
+.admin-model { padding-block: 8px; border-block-start: 1px solid var(--line); }
+.chip--processing, .chip--transcribing { color: var(--accent); animation: pulse 1.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .chip--processing, .chip--transcribing { animation: none; } }
+.notice--info { background: color-mix(in srgb, var(--accent) 14%, var(--surface)); }
+.chip--failed, .chip--high { color: var(--alert); }
+.chip--needs_transcript, .chip--stub { color: var(--warn); }
+/* Mullo has two colours with jobs (owner, 2026-10-16: the green clashed): pink = yours, to
+   act on (to-dos, ticks, switches); red = recording, late, wrong. No green. */
+.chip--actions { color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+
+.notice { padding: 10px 12px; border-radius: var(--radius-sm); background: color-mix(in srgb, var(--warn) 15%, var(--surface)); }
+.notice--alert { background: color-mix(in srgb, var(--alert) 18%, var(--surface)); }
+
+.empty { text-align: center; padding: 40px var(--pad); display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.empty__title { font-weight: 600; font-size: 1.1rem; }
+.empty__body { color: var(--muted); max-width: 32rem; }
+
+/* ── Library ──────────────────────────────────────────────────────────── */
+.day { display: flex; flex-direction: column; gap: 8px; }
+.day-head { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-block-start: 8px; }
+.day-head.is-alert { color: var(--alert); }
+.rec-card { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: var(--text); min-height: var(--tap); }
+.rec-card__top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+/* The title fills the row so a Hebrew one lines up on the right (dir=auto); the rest stays put. */
+.rec-card__title { flex: 1; min-width: 0; text-align: start; font-weight: 600; overflow-wrap: anywhere; }
+.rec-card__meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; color: var(--muted); font-size: 0.875rem; }
+
+/* ── Record ───────────────────────────────────────────────────────────── */
+.record { display: flex; flex-direction: column; gap: var(--gap); }
+.rec-button {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  min-height: 96px; border-radius: var(--radius);
+  border: 2px solid var(--rec); background: color-mix(in srgb, var(--rec) 12%, var(--surface));
+  font-size: 1.2rem; font-weight: 700; cursor: pointer;
+}
+.rec-button__dot { width: 28px; height: 28px; border-radius: 50%; background: var(--rec); }
+.live { display: flex; flex-direction: column; gap: var(--gap); }
+.live__top { display: flex; align-items: center; gap: 12px; }
+.live__dot { width: 14px; height: 14px; border-radius: 50%; background: var(--rec); animation: pulse 1.2s ease-in-out infinite; }
+.live__dot.is-paused { animation: none; background: var(--muted); }
+.live__timer { font-variant-numeric: tabular-nums; font-size: 2rem; font-weight: 700; }
+.live__meter { flex: 1; height: 12px; }
+.live__text { min-height: 8rem; display: flex; flex-direction: column; gap: 6px; font-size: 1.05rem; }
+.live__interim { color: var(--muted); }
+@keyframes pulse { 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .live__dot { animation: none; } }
+
+/* ── Recording detail ─────────────────────────────────────────────────── */
+.rec-detail { display: flex; flex-direction: column; gap: var(--gap); }
+.back { text-decoration: none; min-height: 40px; display: inline-flex; align-items: center; }
+.rec-detail__top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--tap); height: var(--tap); border-radius: 50%;
+  border: 0; background: transparent; color: var(--text); cursor: pointer;
+}
+.icon-btn.is-active { background: var(--surface-2); color: var(--accent); }
+.icon-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rec-detail__tools { display: flex; gap: 4px; }
+.rec-title { margin: 0; font-size: 1.6rem; font-weight: 700; line-height: 1.25; }
+.rec-title__edit {
+  display: block; width: 100%; padding: 2px 0; text-align: start;
+  font: inherit; color: inherit; background: none; border: 0; cursor: text;
+  overflow-wrap: anywhere;
+}
+.rec-title__edit:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+/* The title field, once tapped. Three classes deep so it
+   beats the general input rule (input:not(...):not(...) = 0,2,1). */
+.rec-detail .title-input.title-input {
+  font-size: 1.6rem; font-weight: 700; line-height: 1.25;
+  min-height: 0; padding: 2px 0;
+  background: transparent; border-color: transparent;
+}
+.rec-detail .title-input.title-input:focus { background: var(--surface); border-color: var(--line); padding-inline: 12px; }
+.sheet { gap: 16px; }
+.sheet__group { gap: 8px; }
+.sheet__label { margin: 0; font-size: 0.875rem; color: var(--muted); }
+.sheet .danger-zone { margin: 0; padding-block-start: 14px; border-block-start: 1px solid var(--line); }
+.sheet .danger-zone.card { border-inline: 0; border-block-end: 0; border-radius: 0; padding-inline: 0; padding-block-end: 0; background: none; }
+.rec-detail__meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; color: var(--muted); font-size: 0.875rem; }
+.player { width: 100%; }
+.retranscribe { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.retranscribe select { flex: 1 1 9rem; width: auto; }
+.retranscribe__note { flex-basis: 100%; }
+.tabs { display: flex; gap: 4px; border-block-end: 1px solid var(--line); overflow-x: auto; }
+.tab {
+  flex: 1 0 auto;
+  min-height: var(--tap); padding: 0 8px;
+  background: none; border: 0; border-block-end: 3px solid transparent;
+  color: var(--muted); font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.tab.is-active { color: var(--text); border-block-end-color: var(--accent); }
+.tab__count { margin-inline-start: 6px; font-size: 0.75rem; padding: 2px 7px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.tab-panel { padding-block: 4px; }
+
+.summary { display: flex; flex-direction: column; gap: 16px; }
+.summary__heading { font-size: 0.95rem; font-weight: 600; color: var(--muted); margin-block-end: 6px; }
+.summary--solo .summary__text { font-size: 1.1rem; line-height: 1.55; }
+.summary li + li { margin-block-start: 4px; }
+
+/* Report a problem (S56): the screenshot thumbnail, the details as sent. */
+.report-shot { align-items: center; }
+.report-shot__img { width: 72px; height: 72px; object-fit: cover; border-radius: 10px; }
+.report-shot__full { max-width: 100%; border-radius: 10px; }
+.report-shot__pick { align-self: flex-start; cursor: pointer; }
+.report-details { margin: 0; padding: 10px; border-radius: 10px; background: var(--surface-2); font-size: 0.75rem; white-space: pre-wrap; word-break: break-word; max-height: 40vh; overflow: auto; }
+.report__text { margin: 0; white-space: pre-wrap; }
+
+/* Admin dashboard + reports (S59): windows with one big number, plain tables, a bar per week. */
+.stats-updated { justify-content: space-between; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--gap); }
+.stats-window { display: flex; flex-direction: column; gap: 4px; color: inherit; text-decoration: none; }
+a.stats-window:active { background: var(--surface-2); }
+.stats-window__title { font-size: 0.875rem; color: var(--muted); }
+.stats-window__value { font-size: 1.75rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.stats-window__blind { color: var(--muted); }
+.stats-blind { margin: 0; padding-inline-start: 1.2em; display: flex; flex-direction: column; gap: 6px; }
+.stats-table-wrap { overflow-x: auto; }
+.stats-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.stats-table th { text-align: start; font-weight: 500; color: var(--muted); padding: 6px 8px; border-block-end: 1px solid var(--line); }
+.stats-table td { padding: 6px 8px; border-block-end: 1px solid var(--line); vertical-align: middle; }
+.stats-table td.is-num { font-variant-numeric: tabular-nums; }
+/* Pink, never the browser's green meter (two colours with jobs, no green). */
+.stats-bar { display: block; width: 100%; max-width: 160px; height: 8px; margin-block-start: 4px; appearance: none; border: 0; border-radius: 4px; background: var(--surface-2); }
+.stats-bar::-webkit-meter-bar { background: var(--surface-2); border: 0; border-radius: 4px; height: 8px; }
+.stats-bar::-webkit-meter-optimum-value, .stats-bar::-webkit-meter-suboptimum-value, .stats-bar::-webkit-meter-even-less-good-value { background: var(--accent); border-radius: 4px; }
+.stats-bar::-moz-meter-bar { background: var(--accent); border-radius: 4px; }
+
+/* Updates under a note: dated follow-ups, like lines added in a notebook. */
+.note-updates__list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.note-update { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 2px 8px; }
+.note-update__date { grid-column: 1; }
+.note-update__text { grid-column: 1; margin: 0; line-height: 1.5; white-space: pre-wrap; }
+.note-update__remove { grid-column: 2; grid-row: 1 / span 2; color: var(--muted); font-size: 1.2rem; }
+
+.sections { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.sections__item { display: grid; grid-template-columns: 4rem 1fr; gap: 10px; }
+.sections__time { color: var(--accent); font-variant-numeric: tabular-nums; font-size: 0.875rem; padding-block-start: 2px; }
+.sections__title { font-weight: 600; }
+.sections__summary { color: var(--muted); font-size: 0.95rem; }
+
+.transcript { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.transcript__who { display: flex; gap: 8px; font-size: 0.8rem; color: var(--muted); font-weight: 600; }
+.transcript__time { font-variant-numeric: tabular-nums; font-weight: 400; }
+.transcript__seek {
+  min-height: 32px; padding: 0 10px; margin-block: -6px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: transparent; color: var(--accent); cursor: pointer;
+}
+.transcript__who { align-items: center; }
+.transcript__edit {
+  margin-inline-start: auto; min-width: 40px; min-height: 32px; margin-block: -6px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: transparent; color: var(--muted); cursor: pointer; font-size: 0.95rem;
+}
+.transcript textarea { width: 100%; }
+.teach { border-color: var(--accent); }
+.teach__row { display: flex; flex-direction: column; gap: 8px; padding-block: 6px; border-block-start: 1px solid var(--line); }
+.teach__row:first-of-type { border-block-start: 0; }
+.teach__text { margin: 0; }
+.speakers summary { cursor: pointer; font-weight: 600; min-height: 32px; }
+.speakers .stack { margin-block-start: 10px; }
+
+.danger-zone { margin-block-start: 24px; }
+
+/* ── Actions ──────────────────────────────────────────────────────────── */
+.action-list { list-style: none; padding: 0; display: flex; flex-direction: column; }
+/* .action-list's padding:0 comes after .card - restore the side padding here,
+   or rows run to the card's edge (seen on a phone, 2026-10-04). */
+.action-list.card { padding: 4px var(--pad); }
+.action-row { display: flex; gap: 10px; align-items: flex-start; padding-block: 12px; border-block-end: 1px solid var(--line); text-align: start; }
+.action-row:last-child { border-block-end: 0; }
+.action-row__check { display: flex; align-items: center; justify-content: center; flex: none; min-width: 40px; min-height: var(--tap); margin-block: -12px; margin-inline-start: -8px; cursor: pointer; }
+.action-row__check input { width: 24px; height: 24px; accent-color: var(--accent); }
+.action-row__body { display: flex; flex-direction: column; gap: 10px; padding-block-start: 2px; min-width: 0; flex: 1; }
+/* At rest: the words and one quiet line; the whole of it is the button that opens the tools. */
+.action-row__main {
+  position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 3px;
+  width: 100%; min-height: 0; padding: 0; margin: 0;
+  font: inherit; color: inherit; text-align: start; background: none; border: 0; cursor: pointer;
+}
+.action-row__main:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
+.action-row__label { overflow-wrap: anywhere; font-size: 1.02rem; line-height: 1.4; }
+.action-row__line { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; font-size: 0.8rem; color: var(--muted); }
+.action-row__sep { opacity: 0.5; }
+.action-row__late { color: var(--alert); font-weight: 600; }
+.action-row__tag { color: var(--accent); font-weight: 600; }
+.action-row__from { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+/* High priority: a small red dot before the words, not a red chip on every row. */
+.action-row__high { position: absolute; width: 7px; height: 7px; margin-block-start: 9px; margin-inline-start: -12px; border-radius: 50%; background: var(--alert); }
+/* Open: the task lifts onto a slightly lighter card and its tools show under it. */
+.action-row.is-open { background: var(--surface-2); border-radius: 12px; margin-inline: -8px; padding-inline: 8px; border-block-end-color: transparent; }
+.action-row__tools { display: flex; flex-direction: column; gap: 10px; }
+/* The row grows open (motion.js); its tools come in just behind the edge. */
+.action-row__tools.is-entering { animation: toolsIn 0.3s 0.06s var(--ease) both; }
+@keyframes toolsIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+.action-row { transition: background-color 0.25s var(--ease); }
+.action-row__meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.8rem; color: var(--muted); }
+/* The chip a tap just changed glows once, instead of a message about it. */
+.is-flash { animation: chipFlash 0.9s ease-out; }
+@keyframes chipFlash {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent); border-color: var(--accent); color: var(--accent); }
+  100% { box-shadow: 0 0 0 10px transparent; }
+}
+/* Ticked on To do: strikes through and slides away (tasks.js action-toggle). */
+.action-row.is-leaving { animation: rowLeave 0.38s ease-in forwards; pointer-events: none; }
+.action-row.is-leaving .action-row__label { text-decoration: line-through; color: var(--muted); }
+@keyframes rowLeave { 0%, 35% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateX(24px); } }
+[dir="rtl"].action-row.is-leaving { animation-name: rowLeaveRtl; }
+@keyframes rowLeaveRtl { 0%, 35% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateX(-24px); } }
+/* The kind of task, changeable in place: looks like a label until tapped. */
+.action-row__type { width: auto; min-height: 32px; padding: 2px 6px; font-size: 0.8rem; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; }
+/* The day, same look as the kind; the real date field sits under it, unseen,
+   so the phone's picker opens where the chip is. */
+.action-row__date { position: relative; display: inline-flex; }
+button.action-row__due { min-height: 32px; padding: 2px 10px; font: inherit; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; }
+button.action-row__due.is-empty { border-style: dashed; }
+.action-row__date-input { position: absolute; inset: 0; width: 100%; height: 100%; min-height: 0; padding: 0; border: 0; opacity: 0; pointer-events: none; }
+.action-row__rec {
+  color: var(--muted); font-size: 0.8rem; text-decoration: none;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+}
+.action-row__do {
+  margin-inline-start: auto; min-height: 34px; padding: 0 12px;
+  border-radius: 999px; border: 1px solid var(--line); background: transparent;
+  color: var(--accent); font-weight: 600; font-size: 0.8rem; cursor: pointer;
+}
+.action-row.is-done .action-row__label { text-decoration: line-through; color: var(--muted); }
+/* Overdue: only the day says so (owner, 2026-10-15: red on every chip was harsh). */
+button.action-row__due.is-late { color: var(--alert); font-weight: 600; }
+/* The task a reminder opened (S47). */
+.action-row.is-focused { background: color-mix(in srgb, var(--accent) 14%, transparent); border-radius: var(--radius-sm); padding-inline: 8px; }
+/* The draft under an email or message task (S50). */
+.task-draft { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.task-draft.is-open { align-items: stretch; }
+.task-draft__toggle { align-self: flex-start; min-height: 32px; padding: 2px 12px; font-size: 0.8rem; font-weight: 600; color: var(--accent); background: transparent; border: 1px solid var(--accent); border-radius: 999px; cursor: pointer; }
+.task-draft__toggle.is-open { color: var(--muted); border-color: var(--line); font-weight: 400; }
+.task-draft__state { margin: 0; }
+.task-draft__box { background: var(--surface-2); border-radius: var(--radius-sm); padding: 12px; gap: 8px; }
+.task-draft__box input:not([type="checkbox"]), .task-draft__box textarea { background: var(--surface); }
+.task-draft__line { display: flex; flex-direction: column; gap: 2px; }
+.task-draft__body { line-height: 1.5; }
+.task-draft__box .row { flex-wrap: wrap; }
+.task-draft__box p { margin: 0; }
+.task-draft__sent { align-items: center; gap: 8px; }
+.reminder-note { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-block-end: 12px; }
+
+/* ── Search ───────────────────────────────────────────────────────────── */
+.search-input { font-size: 1.1rem; }
+.search-results { display: flex; flex-direction: column; gap: var(--gap); }
+.search-hit { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: var(--text); }
+.search-hit__match { font-size: 0.9rem; color: var(--muted); }
+.search-hit__kind { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-inline-end: 8px; color: var(--accent); }
+
+.answer__text { white-space: pre-line; font-size: 1.05rem; }
+.answer--notfound { border-color: var(--warn); }
+.answer__sources { gap: 6px; }
+
+/* Ask as a chat (S10): the person's messages on the end side, answers (and drafts) full width. */
+.chat__thread { display: flex; flex-direction: column; gap: var(--gap); }
+.chat__msg { margin: 0; padding: 12px 14px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column; gap: 10px; }
+.chat__msg--me { align-self: flex-end; max-width: 85%; background: var(--surface-2); white-space: pre-line; }
+.chat__msg--ai { align-self: stretch; }
+.chat__about a { color: var(--accent); }
+.chat__draft { background: var(--surface-2); border-radius: var(--radius-sm); padding: 12px; gap: 8px; }
+.chat__changes { gap: 8px; }
+.chat__change { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; background: var(--surface-2); border-radius: var(--radius-sm); padding: 10px 12px; }
+.chat__change-text { flex: 1 1 160px; display: flex; flex-direction: column; gap: 2px; }
+.chat__change-label { font-weight: 600; }
+.chat__change-done { color: var(--accent); text-decoration: none; }
+.chat__draft-kind { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); }
+.chat__draft-subject { margin: 0; font-weight: 700; }
+.chat__draft-body { margin: 0; white-space: pre-wrap; line-height: 1.5; }
+.chat__form textarea { width: 100%; }
+
+/* The chat bar on a recording: a pill on the record button's row, ending
+   where the button begins, so the two read as one dock above the tab bar. */
+.chat-bar {
+  position: fixed; z-index: 6;
+  inset-inline-start: 16px; inset-inline-end: calc(16px + 52px + 10px);
+  bottom: calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom));
+  height: 52px; padding-inline: 18px 6px;
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.35);
+}
+.chat-bar:focus-within { border-color: var(--accent); }
+.chat-bar input.chat-bar__field { /* 0,2,1 and later: beats the general input rule */
+  flex: 1; min-width: 0; min-height: 0; height: 100%; padding: 0;
+  background: transparent; border: 0; outline: none; color: var(--text);
+}
+.chat-bar__send {
+  flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent); color: var(--accent-ink); cursor: pointer;
+}
+.chat-bar__send:disabled { opacity: 0.5; cursor: default; }
+.chat-bar__send:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+.chat-bar:has(.chat-bar__open) { padding-inline-start: 6px; }
+.chat-bar__open {
+  flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent; color: var(--accent); cursor: pointer;
+}
+.chat-bar__open:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* The chat about a recording: a sheet over the page, almost full height (like Pocket's),
+   with the message box at its foot. Only in the page while open. */
+.chat-sheet-backdrop { position: fixed; inset: 0; z-index: 30; border: 0; padding: 0; background: rgb(0 0 0 / 0.55); }
+.chat-sheet {
+  position: fixed; inset-inline: 0; bottom: 0; top: calc(12px + env(safe-area-inset-top)); z-index: 31;
+  max-width: 760px; margin-inline: auto;
+  display: flex; flex-direction: column;
+  background: var(--surface); border: 1px solid var(--line); border-block-end: 0; border-radius: 24px 24px 0 0;
+}
+.chat-sheet::before { content: ''; flex: none; align-self: center; width: 40px; height: 4px; margin-block-start: 8px; border-radius: 999px; background: var(--line); }
+.chat-sheet__head { flex: none; display: flex; align-items: center; gap: 10px; padding: 6px var(--pad); }
+.chat-sheet__title { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
+.chat-sheet__rec { max-width: 100%; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-sheet__body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; gap: 12px; padding: 8px var(--pad) 16px; }
+.chat-sheet__starters { gap: 10px; align-items: flex-start; }
+.chat-sheet__starters p { margin: 0; }
+.chat-sheet__starter { min-height: 44px; text-align: start; }
+.chat-bar.chat-bar--sheet {
+  position: static; flex: none; box-shadow: none;
+  margin: 0 var(--pad) calc(12px + env(safe-area-inset-bottom));
+}
+.answer__source { min-height: 40px; display: flex; align-items: center; text-decoration: none; }
+
+/* ── Activity, more ──────────────────────────────────────── */
+.help summary { cursor: pointer; font-weight: 600; min-height: 32px; }
+.help ol { margin-block-start: 10px; display: flex; flex-direction: column; gap: 6px; }
+
+.activity { list-style: none; padding-block: 4px; display: flex; flex-direction: column; }
+.activity__item { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding-block: 10px; border-block-end: 1px solid var(--line); align-items: center; }
+.activity__item:last-child { border-block-end: 0; }
+.activity__line { overflow-wrap: anywhere; }
+.activity__item > .btn { grid-row: span 2; }
+.activity__meta { grid-column: 1; }
+.activity__verb { font-weight: 700; }
+.activity__verb.is-delete { color: var(--alert); }
+.activity__verb.is-insert { color: var(--accent); }
+
+.menu { display: flex; flex-direction: column; padding: 0; }
+.menu__item {
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: 64px; padding: 8px var(--pad);
+  text-decoration: none; color: var(--text); font-weight: 600;
+  border-block-end: 1px solid var(--line);
+}
+.menu__item:last-child { border-block-end: 0; }
+/* ── Settings (Pocket / Vocci style) ───────────────────────────────────── */
+.set-hub, .set-page { gap: 22px; }
+/* The top of Settings: a card with your photo inside a ring that shows what's
+   left of your plan (full = plenty), your name, the plan and how copying is going. */
+.profile {
+  display: flex; align-items: center; gap: 16px; padding: 16px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+}
+.profile__avatar {
+  width: 72px; height: 72px; border-radius: 50%; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-2); font-size: 1.8rem; font-weight: 700;
+}
+.profile__avatar--photo { object-fit: cover; }
+.profile__text { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
+.profile__top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
+.profile__name { font-size: 1.3rem; font-weight: 700; }
+.profile__plan { font-size: 0.9rem; font-weight: 600; color: var(--accent); }
+.profile__plan.is-low, .minutes-left.is-low { color: var(--warn); }
+.minutes-left { align-self: center; font-weight: 600; color: var(--accent); text-decoration: none; }
+.profile__sub { color: var(--muted); font-size: 0.9rem; }
+.profile--link { color: inherit; text-decoration: none; }
+
+/* The plan ring: a conic fill in the plan's colour; the rest of the circle is a track. */
+.ring {
+  --left: 0; --ring: var(--line);
+  flex: none; padding: 4px; border-radius: 50%;
+  background: conic-gradient(var(--ring) calc(var(--left) * 1%), var(--surface-2) 0);
+}
+.ring > .profile__avatar { border: 3px solid var(--surface); }
+.ring--none { background: var(--surface-2); }
+.ring--ok { --ring: var(--accent); }
+.ring--low { --ring: var(--warn); }
+.ring--empty { --ring: var(--alert); background: var(--alert); }
+.ring--0 { --left: 0; } .ring--10 { --left: 10; } .ring--20 { --left: 20; } .ring--30 { --left: 30; }
+.ring--40 { --left: 40; } .ring--50 { --left: 50; } .ring--60 { --left: 60; } .ring--70 { --left: 70; }
+.ring--80 { --left: 80; } .ring--90 { --left: 90; } .ring--100 { --left: 100; }
+.plan-badge {
+  display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 700;
+  letter-spacing: 0.02em; border: 1px solid var(--line); background: var(--surface-2);
+}
+.plan-badge--pro { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
+.plan-badge--trial { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 50%, var(--line)); }
+.account__photo { align-items: center; text-align: center; }
+/* An email is one long word: let it break instead of pushing the page sideways. */
+.profile__name--email, .account__email { font-size: 1.1rem; overflow-wrap: anywhere; }
+.account__email { font-weight: 600; }
+.account__ok { color: var(--ok, inherit); }
+/* Connections: the MCP address, read-only and easy to select. */
+.connect__address { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .9rem; width: 100%; }
+.btn--google { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.btn--google__g {
+  width: 24px; height: 24px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center;
+  background: #fff; color: #4285f4; font-weight: 700; font-size: 0.95rem;
+}
+/* "Continue with Apple": black with white, or white with black in dark mode (Apple's button rules). */
+.btn--apple { display: flex; align-items: center; justify-content: center; gap: 10px; background: #000; color: #fff; border-color: #000; }
+.btn--apple__logo { width: 17px; height: 20px; flex: none; margin-top: -3px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn--apple { background: #fff; color: #000; border-color: #fff; } }
+:root[data-theme="dark"] .btn--apple { background: #fff; color: #000; border-color: #fff; }
+.account__or { text-align: center; margin-block: -8px; }
+/* Sign-in: "I have read the Privacy Policy / Terms" ticks, the whole line tappable. */
+.legal-tick { display: flex; align-items: flex-start; gap: 12px; }
+.legal-tick input { flex: none; width: 22px; height: 22px; margin: 3px 0 0; accent-color: var(--accent); }
+.legal-tick label { flex: 1; padding-block: 2px; cursor: pointer; }
+/* "We updated our Privacy Policy and Terms" (S23), above every screen until accepted. */
+.legal-update { border-color: var(--accent); margin-bottom: 16px; }
+.legal-update__title { margin: 0; font-size: 1.05rem; }
+.account__code { font-size: 1.6rem; letter-spacing: 0.3em; text-align: center; font-variant-numeric: tabular-nums; }
+
+.usage { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.usage__title { font-size: 1.05rem; }
+.usage__tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.usage__tile { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.usage__label { font-size: 0.9rem; padding-block-end: 8px; border-block-end: 1px solid var(--line); }
+.usage__value { color: var(--muted); font-variant-numeric: tabular-nums; }
+.usage__foot { color: var(--muted); font-size: 0.85rem; }
+
+.set-group { display: flex; flex-direction: column; gap: 8px; }
+.set-group__title { font-size: 0.9rem; font-weight: 500; color: var(--muted); padding-inline: 4px; }
+.set-list { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+.set-row {
+  display: flex; align-items: center; gap: 14px; width: 100%;
+  min-height: 72px; padding: 12px 16px;
+  color: var(--text); text-decoration: none; text-align: start;
+  background: none; border: 0; font: inherit; cursor: pointer;
+  position: relative;
+}
+/* Divider starts after the icon, like both apps. */
+.set-row + .set-row::before {
+  content: ''; position: absolute; top: 0; inset-inline: 70px 0;
+  border-block-start: 1px solid var(--line);
+}
+.set-row:active { background: var(--surface-2); }
+.set-row__icon {
+  width: 42px; height: 42px; border-radius: 50%; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-2); font-size: 1.15rem;
+}
+.set-row__text { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+.set-row__title { font-size: 1.02rem; }
+.set-row__sub { color: var(--muted); font-size: 0.85rem; line-height: 1.35; }
+.set-row__chev { color: var(--muted); font-size: 1.6rem; line-height: 1; flex: none; }
+[dir="rtl"] .set-row__chev, :root[dir="rtl"] .set-row__chev { transform: scaleX(-1); }
+.set-choice { min-height: 60px; }
+.set-choice + .set-choice::before { inset-inline: 16px 0; }
+.set-choice__mark { color: var(--accent); font-weight: 700; font-size: 1.1rem; width: 1.2em; text-align: center; }
+.set-version { text-align: center; color: var(--muted); font-size: 0.9rem; padding-block: 8px 4px; }
+
+/* Connections: an app per row, what you can do today on the right (Set up / Built in / Coming soon). */
+.conn-row { cursor: default; }
+.conn-row:active { background: none; }
+.conn-chip {
+  flex: none; padding: 8px 14px; border-radius: 999px;
+  background: var(--surface-2); color: var(--muted); font-size: 0.9rem; text-decoration: none; white-space: nowrap;
+}
+.conn-chip--soon { color: var(--warn); background: color-mix(in srgb, var(--warn) 12%, var(--surface-2)); }
+.conn-chip--action { color: var(--text); cursor: pointer; }
+.conn-chip--action:active { background: var(--line); }
+button.conn-chip { border: 0; font: inherit; font-size: 0.9rem; }
+
+/* "Connect Claude": a sheet from the bottom with what to paste (like Pocket's). Only in the
+   page while open, so nothing hidden stays tappable. */
+.conn-sheet-backdrop { position: fixed; inset: 0; z-index: 30; border: 0; padding: 0; background: rgb(0 0 0 / 0.55); }
+.conn-sheet {
+  position: fixed; inset-inline: 0; bottom: 0; z-index: 31; max-height: 85vh; overflow-y: auto;
+  padding: 20px var(--pad) calc(20px + env(safe-area-inset-bottom));
+  background: var(--surface); border-block-start: 1px solid var(--line); border-radius: 24px 24px 0 0;
+}
+.conn-sheet__head { justify-content: space-between; align-items: center; }
+.conn-sheet__title { margin: 0; font-size: 1.5rem; }
+.conn-sheet__fields { border: 1px solid var(--line); border-radius: 16px; }
+.conn-sheet__field { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
+.conn-sheet__field + .conn-sheet__field { border-block-start: 1px solid var(--line); }
+.conn-sheet__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.conn-sheet__label { font-size: 0.75rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.conn-sheet__value { overflow-wrap: anywhere; }
+.conn-sheet__open { width: 100%; }
+
+/* iOS-style switch on a real checkbox (keyboard + screen readers intact). */
+.switch {
+  appearance: none; -webkit-appearance: none; flex: none;
+  width: 52px; height: 32px; border-radius: 999px; margin: 0;
+  background: var(--line); position: relative; cursor: pointer; transition: background 0.15s;
+}
+.switch::after {
+  content: ''; position: absolute; top: 3px; inset-inline-start: 3px;
+  width: 26px; height: 26px; border-radius: 50%; background: #fff;
+  transition: inset-inline-start 0.15s;
+}
+.switch:checked { background: var(--accent); }
+.switch:checked::after { inset-inline-start: 23px; }
+@media (prefers-reduced-motion: reduce) { .switch, .switch::after { transition: none; } }
+
+/* ── Motion ─────────────────────────────────────────────────────────────
+   Owner, 2026-10-15: motion with a purpose, like the system's. What moves is answered by
+   ui/motion.js (things glide from their old box to the new one); this is the rest: what a
+   finger presses gives under it, and what has no old box comes in from where it belongs.
+   All of it is off for "reduce motion". One curve everywhere: a quick start, a soft stop. */
+:root { --ease: cubic-bezier(0.2, 0, 0, 1); }
+
+/* Pressed, the way the phone's own apps do it (owner, 2026-10-15: the browser's grey box and
+   things shrinking under the finger felt like a web page). No grey box anywhere; a list row
+   fills softly, a button dims, a round icon gets a soft circle. Instant in, a gentle fade out. */
+html { -webkit-tap-highlight-color: transparent; }
+.btn, .pill, .chip, .action-row__type, button.action-row__due, .action-row__do, .task-draft__toggle,
+.conn-chip--action, .tab, .chat-bar__send, .back, .rec-title__edit { transition: opacity 0.25s var(--ease), background-color 0.2s, color 0.2s, border-color 0.2s; }
+.btn:active, .pill:active, .chip:active, .action-row__type:active, button.action-row__due:active, .action-row__do:active,
+.task-draft__toggle:active, .conn-chip--action:active, .tab:active, .chat-bar__send:active, .back:active,
+.rec-title__edit:active { opacity: 0.55; transition-duration: 0s; }
+.icon-btn, .chat-bar__open { transition: background-color 0.3s var(--ease); }
+.icon-btn:active, .chat-bar__open:active { background: color-mix(in srgb, var(--text) 14%, transparent); transition-duration: 0s; }
+/* A list row (a task, a recording) lights up as a whole, rounded, like a native list. */
+.action-row, .rec-card { transition: background-color 0.3s var(--ease); }
+.action-row:has(.action-row__main:active) { background: color-mix(in srgb, var(--text) 7%, transparent); border-radius: 12px; transition-duration: 0s; }
+.rec-card:active { background: color-mix(in srgb, var(--text) 7%, var(--surface)); transition-duration: 0s; }
+
+/* The bottom bar like the phone's: the current tab has a soft pill behind its icon, which
+   grows in when a new tab is chosen; pressing one lights its pill spot. */
+.tabbar__icon { display: grid; place-items: center; width: 56px; height: 30px; border-radius: 999px; transition: background-color 0.25s var(--ease); }
+.tabbar__item.is-active .tabbar__icon { background: color-mix(in srgb, var(--accent) 24%, transparent); animation: navPill 0.35s var(--ease); }
+.tabbar__item:active .tabbar__icon { background: color-mix(in srgb, var(--text) 12%, transparent); transition-duration: 0s; }
+@keyframes navPill { from { transform: scaleX(0.4); opacity: 0; } to { transform: none; opacity: 1; } }
+/* A ticked box pops as it fills. */
+.action-row.is-leaving .action-row__check input { animation: tickPop 0.3s var(--ease); }
+@keyframes tickPop { 0% { transform: scale(0.8); } 55% { transform: scale(1.18); } 100% { transform: scale(1); } }
+
+/* What grows (data-flip-mode="size") shows its contents only inside its moving edge. */
+[data-flip-mode="size"] { overflow: clip; overflow-clip-margin: 8px; }
+
+/* A selected tab: a line that slides between tabs, not a border that jumps. */
+.tab { position: relative; }
+.tab.is-active { border-block-end-color: transparent; }
+.tab__bar { position: absolute; inset-inline: 8px; bottom: 0; height: 3px; border-radius: 3px; background: var(--accent); }
+/* To do / Done / All: the light slides to the chosen one, the words stay. */
+/* The light inverts what it passes over, so the words stay readable mid-slide: white over
+   the dark theme (dark words), dark over the light theme (light words). */
+.pill:has(.pill__thumb) { position: relative; color: var(--text); background: transparent; border-color: transparent; }
+.pill__thumb { position: absolute; inset: -1px; z-index: 1; border-radius: 999px; background: #fff; mix-blend-mode: difference; pointer-events: none; }
+
+/* Screens: deeper slides in from the side (back from the other), tabs fade. */
+/* The screen's parts move, never the screen box itself: a moving box would carry the
+   pinned chat bar along with it (it started mid-screen and slid down, owner 2026-10-16). */
+.view-push > :not(.chat-bar, .chat-sheet, .chat-sheet-backdrop) { animation: pushIn 0.34s var(--ease); }
+.view-pop > :not(.chat-bar, .chat-sheet, .chat-sheet-backdrop) { animation: popIn 0.34s var(--ease); }
+.view-fade > :not(.chat-bar, .chat-sheet, .chat-sheet-backdrop) { animation: fadeIn 0.22s var(--ease); }
+@keyframes pushIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: none; } }
+@keyframes popIn { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: none; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* A recording's tabs: the next page comes in from the side its tab is on. */
+.tab-panel.enter-next { animation: pageNext 0.3s var(--ease); }
+.tab-panel.enter-prev { animation: pagePrev 0.3s var(--ease); }
+@keyframes pageNext { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@keyframes pagePrev { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+
+/* The chat grows out of its bar (motion.js morph); its contents follow a moment later. */
+.chat-sheet.is-entering > * { animation: fadeIn 0.3s 0.1s var(--ease) both; }
+.chat-sheet-backdrop.is-entering, .conn-sheet-backdrop.is-entering { animation: fadeIn 0.3s var(--ease); }
+.conn-sheet.is-entering { animation: sheetUp 0.36s var(--ease); }
+@keyframes sheetUp { from { transform: translateY(100%); } to { transform: none; } }
+/* The record button flying into its place on the Record screen (motion.js flyHome/land): a
+   stand-in on the button's exact spot, over everything; the dot it lands on waits hidden. */
+.fab.fab--flyer { z-index: 40; pointer-events: none; will-change: transform; }
+.is-awaiting { visibility: hidden; }
+/* The ⋯ and share menus open out of their button, top right. */
+.sheet.is-entering { animation: menuIn 0.24s var(--ease); transform-origin: top right; }
+@keyframes menuIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+@media (min-width: 900px) {
+  .page-head__title { font-size: 1.9rem; }
+  /* A computer (desktop layout, 2026-10-17): the bottom tab bar becomes a side menu on the left
+     and the record button a "Record" button at its top. Same elements as on a phone. The
+     screens use the rest of the window (owner: full width); the chat sheet stays 760px. */
+  :root { --col: 100%; --rail: 232px; }
+  body { padding-block-end: 0; padding-inline-start: var(--rail); }
+  .view, .shell-head { padding-inline: 32px; }
+  .tabbar {
+    inset-inline-end: auto; inset-block: 0; width: var(--rail);
+    display: flex; flex-direction: column; gap: 2px;
+    padding: calc(var(--head-h) + 76px) 14px 18px;
+    border-block-start: 0; border-inline-end: 1px solid var(--line);
+  }
+  .tabbar__item {
+    flex-direction: row; justify-content: flex-start; gap: 12px;
+    min-height: 40px; padding: 8px 12px; border-radius: 10px; font-size: 0.95rem;
+  }
+  .tabbar__item:hover { color: var(--text); background: var(--surface-2); }
+  .tabbar__item.is-active { background: var(--surface-2); }
+  .tabbar__item.is-active .tabbar__icon { background: none; animation: none; }
+  .tabbar__item[data-nav="settings"] { margin-block-start: auto; }
+  .fab {
+    inset-inline-start: 14px; inset-inline-end: auto;
+    top: calc(var(--head-h) + 16px); bottom: auto;
+    width: calc(var(--rail) - 28px); height: 44px; border-radius: 12px; gap: 10px;
+    box-shadow: none; text-decoration: none;
+  }
+  .fab::after { content: 'Record'; color: #fff; font-weight: 600; }
+  .fab.is-live::after { content: 'Recording'; }
+  .chat-bar { inset-inline-start: calc(var(--rail) + 32px); inset-inline-end: 32px; bottom: 24px; }
+}
+
+/* The greeting in Library's reader on a computer (desktop layout, 2026-10-17). */
+.today { display: flex; flex-direction: column; gap: 18px; }
+.today__head { flex-direction: column; align-items: flex-start; gap: 2px; }
+.today__stats { display: flex; flex-wrap: wrap; gap: 12px; }
+.today__stat {
+  display: flex; flex-direction: column; padding: 10px 16px; min-width: 120px;
+  border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line);
+  color: var(--muted); font-size: 0.85rem;
+}
+.today__stat b { color: var(--text); font-size: 1.3rem; line-height: 1.3; }
+.today__list-head { display: flex; align-items: baseline; }
+.today__all { margin-inline-start: auto; color: var(--accent); text-decoration: none; text-transform: none; letter-spacing: 0; }
+.today-row { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: var(--text); }
+.today-row__title { font-weight: 600; }
+.today-row__line { color: var(--muted); font-size: 0.85rem; }
+
+/* Library on a computer, 1200px+ (desktop layout, 2026-10-17): list + reader, each scrolling. */
+@media (min-width: 1200px) {
+  .view:has(> .lib-split) { max-width: none; padding: 0; }
+  .view > .lib-split {
+    display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 0;
+    height: calc(100dvh - var(--head-h));
+  }
+  .lib-split__list {
+    overflow-y: auto; padding: 16px; border-inline-end: 1px solid var(--line);
+    display: flex; flex-direction: column; gap: var(--gap);
+  }
+  .lib-split__list > div { display: flex; flex-direction: column; gap: 16px; }
+  .lib-split__list .page-head__title { font-size: 1.3rem; }
+  .lib-split__reader { overflow-y: auto; padding: 28px 40px 120px; }
+  .lib-split__reader > * { display: flex; flex-direction: column; gap: 16px; max-width: 980px; }
+  .rec-card.is-current, .today-row.is-current { border-color: var(--accent); }
+  .chat-bar { inset-inline-start: calc(var(--rail) + 340px + 40px); inset-inline-end: 40px; }
+}

@@ -1,0 +1,666 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Mullo mascot - preview</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#071214;color:#EAF6F3;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:40px 48px 60px}
+h1{font-size:42px;font-weight:800;letter-spacing:-.03em;margin:0 0 6px}h1 i{color:#9EDDCF;font-style:normal}
+.lead{color:#A9C9C3;margin:0 0 34px;font-size:16px;max-width:900px;line-height:1.45}
+h2.sect{font-size:13px;letter-spacing:.12em;color:#7FA9A2;font-weight:600;margin:40px 0 16px;text-transform:uppercase}
+.grid{display:flex;flex-wrap:wrap;gap:26px}
+figure{margin:0;max-width:316px;display:flex;flex-direction:column;gap:10px}
+figcaption b{display:block;font-size:15px}figcaption small{color:#7FA9A2;font-size:12.5px}
+.phone{width:300px;height:620px;border-radius:38px;background:#0B181B;border:8px solid #1c2b2e;box-shadow:0 20px 50px #0008;position:relative;overflow:hidden;padding:0 18px;display:flex;flex-direction:column}
+.phone.cur{background:#000;}
+.sb{display:flex;justify-content:space-between;font-size:11px;color:#A9C9C3;padding:12px 4px 6px}
+.ph{margin:4px 0 6px;font-size:22px;font-weight:700}
+.stage{display:flex;justify-content:center;margin:-6px 0 2px}.stage.tall{margin:70px 0 4px}
+.field{display:flex;justify-content:space-between;align-items:center;background:#11262A;border:1px solid #1E3538;border-radius:12px;padding:9px 12px;margin:5px 0;font-size:12.5px}
+.field span{color:#7FA9A2}
+.cur .field{background:#1a1a1a;border-color:#2a2a2a}.cur .field span{color:#9aa}
+.recbtn{display:flex;align-items:center;gap:12px;background:#13262A;border:1px solid #2A4A4E;border-radius:22px;padding:10px 14px;margin-top:10px}
+.recbtn__face{width:58px;height:58px;border-radius:50%;background:#0B181B;border:2px solid #9EDDCF;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.recbtn__txt b{display:block;font-size:16px}.recbtn__txt small{color:#7FA9A2;font-size:11.5px}
+.cur .recbtn{background:#1a1a1a;border-color:#333}.cur .recbtn__face{background:#000;border-color:#5fb3ff}.cur .recbtn__txt small{color:#9aa}
+.timer{text-align:center;font-size:34px;font-weight:800;letter-spacing:-.02em;margin-top:2px}
+.live{color:#A9C9C3;font-size:13px;text-align:center;font-style:italic;margin:6px 6px 14px;line-height:1.4}
+.row2{display:flex;gap:10px}.btn{flex:1;text-align:center;border-radius:16px;padding:13px 6px;font-weight:600;font-size:14px}
+.btn.ghost{border:1px solid #2A4A4E;color:#A9C9C3}.btn.stop{background:#9EDDCF;color:#0B181B}
+.banner{display:flex;align-items:center;gap:6px;background:#11262A;border:1px solid #1E3538;border-radius:18px;padding:4px 14px 4px 2px;margin:6px 0 12px}
+.banner.ready{border-color:#9EDDCF;background:#13302F}
+.banner b{display:block;font-size:15px}.banner small{color:#7FA9A2;font-size:12px}
+.li{border-bottom:1px solid #1A3134;padding:12px 2px}.li b{display:block;font-size:14px;font-weight:600}.li small{color:#7FA9A2;font-size:12px}
+.empty{text-align:center;color:#A9C9C3;font-size:13px;line-height:1.45;margin:6px 10px 0}.empty b{display:block;color:#EAF6F3;font-size:18px;margin-bottom:4px}
+.meta{color:#7FA9A2;font-size:12px;margin:0 0 10px}.sec{font-size:13px;color:#9EDDCF;margin:12px 0 4px;font-weight:600}
+.body{font-size:13.5px;line-height:1.5;margin:0;color:#D6E8E4}.todo{font-size:13.5px;padding:7px 0;border-bottom:1px solid #1A3134}
+.nav{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-around;padding:12px 6px 16px;border-top:1px solid #1A3134;background:#0B181B;font-size:11px;color:#6B8A86}
+.nav .on{color:#9EDDCF;font-weight:700}
+.nav span{display:flex;flex-direction:column;align-items:center;gap:2px}.nav em{font-style:normal;font-size:17px;line-height:1}
+.nav{padding:8px 6px 12px}
+.fab{position:absolute;right:16px;bottom:70px;width:52px;height:52px;border-radius:50%;background:#0B181B;border:2px solid #9EDDCF;box-shadow:0 6px 16px #000a;display:flex;align-items:center;justify-content:center;z-index:2}
+.cur .fab{background:#000;border-color:#5fb3ff}
+.btn.wide{display:block;flex:none;margin-top:12px;padding:15px}
+.mins{text-align:center;color:#7FA9A2;font-size:11.5px;margin:6px 0 0}
+.hint{position:absolute;right:78px;bottom:104px;font-size:30px;color:#9EDDCF;opacity:.8}
+.cur .nav{background:#000;border-color:#222;color:#777}.cur .nav .on{color:#5fb3ff}
+.toast{width:300px;display:flex;align-items:center;gap:8px;background:#11262A;border:1px solid #1E3538;border-radius:18px;padding:4px 14px 4px 4px}
+.toast b{display:block;font-size:14px}.toast small{color:#7FA9A2;font-size:12px}
+.watch{width:210px;height:210px;border-radius:50%;background:#000;border:9px solid #23282a;box-shadow:0 0 0 3px #111,0 16px 40px #0009;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.watch .t{font-size:13px;color:#A9C9C3;margin-top:2px}.watch .big{font-size:26px;font-weight:800}
+.watch .wbtn{margin-top:6px;background:#9EDDCF;color:#0B181B;border-radius:18px;padding:5px 16px;font-size:12px;font-weight:700}
+.face .clock{font-size:46px;font-weight:300;letter-spacing:-.02em}.face .date{font-size:11px;color:#888;margin-top:-4px}
+.comp{position:absolute;bottom:14px;width:66px;height:66px;border-radius:50%;background:#14191a;border:2px solid #2b3335;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.comp small{font-size:8.5px;color:#cfe;margin-top:-3px}
+.comp.mono{background:#0e0e0e}
+figure:has(.home){max-width:none}.home{width:360px;border-radius:26px;padding:22px;background:linear-gradient(160deg,#2d4f6b,#3d2f55 60%,#26343a);display:grid;grid-template-columns:repeat(4,1fr);gap:16px 10px}
+.app{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;color:#fff;text-shadow:0 1px 2px #0008}
+.ic{width:58px;height:58px;border-radius:50%;background:#0B181B;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 4px 10px #0006}
+.ic.plain{background:#ddd}.ic.plain i{width:26px;height:26px;border-radius:6px;background:#888;display:block}
+.ic.themed{background:#D9E7E3}
+.note{color:#7FA9A2;font-size:12.5px;max-width:340px;line-height:1.45;margin:0}
+/* Designer's mascot CSS (Motion.dc.html), unchanged except the orbit origin moved into classes. */
+.mullo{display:inline-flex;line-height:0}
+.mullo .m-body,.mullo .eye,.mullo .chew,.mullo .m-antenna,.mullo .m-bounce,.mullo .bar,.mullo .spark,.mullo .shadow{transform-box:fill-box;transform-origin:50% 100%}
+.mullo .eye,.mullo .chew,.mullo .bar,.mullo .spark{transform-origin:50% 50%}
+.orbit-full{transform-box:view-box;transform-origin:214px 88px}.orbit-mini{transform-box:view-box;transform-origin:53px 12px}
+.mullo .v{opacity:0;transition:opacity .18s ease}.mullo .m-bub{opacity:0}
+.st-idle .v-open,.st-idle .v-smile,.st-listening .v-open,.st-listening .v-o,.st-mulling .v-closed,.st-mulling .v-chew,.st-ready .v-closed,.st-ready .v-big,.st-silent .v-open,.st-silent .v-flat,.st-silent .v-dots,.st-offline .v-half,.st-offline .v-flat{opacity:1}
+@keyframes mBreathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.02,.975)}}
+@keyframes mTalk{0%,100%{transform:scale(1,1)}30%{transform:scale(1.035,.955)}60%{transform:scale(.985,1.02)}}
+@keyframes mBlink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
+@keyframes mSway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+@keyframes mRise{0%{transform:translate(0,0) scale(.3);opacity:0}15%{opacity:.9}100%{transform:translate(46px,-120px) scale(1.1);opacity:0}}
+@keyframes mOrbit{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+@keyframes mChew{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.35)}}
+@keyframes mBar{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+@keyframes mHop{0%,40%,100%{transform:translateY(0)}12%{transform:translateY(-28px)}24%{transform:translateY(0)}31%{transform:translateY(-8px)}}
+@keyframes mShadow{0%,40%,100%{transform:scaleX(1);opacity:.3}12%{transform:scaleX(.7);opacity:.15}}
+@keyframes mPop{0%,100%{transform:scale(0);opacity:0}15%{transform:scale(1.2);opacity:1}40%{transform:scale(1);opacity:1}60%{transform:scale(0);opacity:0}}
+@keyframes mLook{0%,20%,100%{transform:translateX(0)}35%,50%{transform:translateX(-5px)}65%,80%{transform:translateX(5px)}}
+@keyframes mDots{0%,100%{opacity:.25}50%{opacity:1}}
+.mullo .m-body{animation:mBreathe 3.2s ease-in-out infinite}.mullo .eye{animation:mBlink 4.4s infinite}
+.mullo .m-antenna{animation:mSway 3.6s ease-in-out infinite}.mullo .bar{opacity:.35}
+.st-listening .m-body{animation:mTalk .5s ease-in-out infinite}.st-listening .m-antenna{animation:mSway 1s ease-in-out infinite}
+.st-listening .m-bub{animation:mRise 1.8s ease-out infinite}.st-listening .m-bub.b2{animation-delay:.6s}.st-listening .m-bub.b3{animation-delay:1.2s}
+.st-listening .bar{opacity:1;animation:mBar .6s ease-in-out infinite}
+.st-listening .bar.d1{animation-delay:.1s}.st-listening .bar.d2{animation-delay:.25s}.st-listening .bar.d3{animation-delay:.4s}.st-listening .bar.d4{animation-delay:.15s}
+.st-mulling .m-orbit{animation:mOrbit 2.6s linear infinite}.st-mulling .m-orbit .m-bub{opacity:.8}
+.st-mulling .chew{animation:mChew .38s ease-in-out infinite}.st-mulling .m-body{animation:mBreathe 1.4s ease-in-out infinite}
+.st-mulling .bar{opacity:.6;animation:mBar 1.8s ease-in-out infinite}
+.st-ready .m-bounce{animation:mHop 2.2s ease-out infinite}.st-ready .shadow{animation:mShadow 2.2s ease-out infinite}
+.st-ready .spark{animation:mPop 2.2s ease-out infinite}.st-ready .spark.s2{animation-delay:.12s}.st-ready .spark.s3{animation-delay:.24s}
+.st-ready .bar{opacity:1}
+.st-silent .pupil{animation:mLook 2.8s ease-in-out infinite}
+.st-silent .v-dots circle{animation:mDots 1.2s ease-in-out infinite}.st-silent .v-dots circle:nth-child(2){animation-delay:.2s}.st-silent .v-dots circle:nth-child(3){animation-delay:.4s}
+.st-offline .m-antenna{animation:none;transform:rotate(38deg)}.st-offline .m-body{animation:mBreathe 5s ease-in-out infinite}
+.st-offline .tip{fill:#6B7F82}.st-offline .bar{opacity:.12}
+.spark{opacity:0}
+.still .mullo *{animation:none!important}
+@media (prefers-reduced-motion: reduce){.mullo *{animation:none!important}}
+</style></head><body>
+<h1>mullo<i>.</i> in the app</h1>
+<p class="lead">Preview only, nothing built. The mascot is the designer's own SVG and CSS. The floating record button becomes Mullo: always there, always showing what the app is doing. The big mascot appears only when something happens (recording, mulling, ready, empty), and reading screens stay calm. Colours here are the mascot's (mint on dark teal). The last phone shows Mullo's current black and blue for comparison.</p>
+
+<h2 class="sect">Phone</h2>
+<div class="grid">
+<figure><div class="phone"><div class="sb"><span>9:41</span><span>▮▮▮ 82%</span></div><h2 class="ph">Library</h2>
+    <div class="li"><b>Standup, Tuesday</b><small>Today 9:02 · 2 to do</small></div><div class="li"><b>Call with Dana</b><small>Yesterday · 1 to do</small></div><div class="li"><b>Idea: garden shed</b><small>Mon · note</small></div><div class="li"><b>Dentist follow-up</b><small>Sun · 1 to do</small></div><span class="fab"><span class="mullo st-idle"><svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mm1" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<g class="m-bounce"><g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"/><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"/></g>
+<g class="m-body"><path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mm1)"/>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#fff"/></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"/><path d="M55 64 Q62 56 69 64"/></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"/><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"/></g>
+<ellipse cx="27" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/><ellipse cx="73" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"/></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"/></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"/></g>
+</g></g></svg></span></span><div class="nav"><span class="on"><em>▤</em>Library</span><span class=""><em>✓</em>Actions</span><span class=""><em>⌕</em>Search</span><span class=""><em>⚙</em>Settings</span></div></div><figcaption><b>Library, idle</b><small>The record button is Mullo himself, bottom right on every screen</small></figcaption></figure>
+<figure><div class="phone"><div class="sb"><span>9:41</span><span>▮▮▮ 82%</span></div><h2 class="ph">Record</h2>
+    <div class="stage"><span class="mullo st-idle"><svg width="130" height="137" viewBox="0 0 400 420" aria-hidden="true">
+<defs><radialGradient id="mj2" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="0.6" stop-color="#F7BFC9"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<circle cx="200" cy="290" r="168" fill="#9EDDCF" opacity="0.05"/>
+<path d="M44 250 A160 160 0 0 0 44 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<path d="M356 250 A160 160 0 0 1 356 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<g fill="#9EDDCF"><rect class="bar" x="268" y="44" width="9" height="20" rx="4.5"/><rect class="bar d1" x="283" y="30" width="10" height="48" rx="5"/><rect class="bar d2" x="299" y="40" width="9" height="28" rx="4.5"/><rect class="bar d3" x="314" y="34" width="10" height="40" rx="5"/><rect class="bar d4" x="330" y="46" width="9" height="16" rx="4.5"/></g>
+<ellipse cx="200" cy="396" rx="176" ry="18" fill="#132A2D"/><ellipse cx="200" cy="392" rx="176" ry="18" fill="#1A3639"/>
+<ellipse cx="200" cy="392" rx="176" ry="18" fill="none" stroke="#9EDDCF" stroke-width="1" opacity="0.3"/>
+<ellipse class="shadow" cx="200" cy="388" rx="120" ry="8" fill="#000" opacity="0.3"/>
+<g class="m-bounce"><g class="m-antenna">
+<path d="M200 182 C192 164 214 152 205 134 C198 120 214 110 214 98" fill="none" stroke="#F4BCC8" stroke-width="8" stroke-linecap="round"/>
+<circle class="tip" cx="214" cy="88" r="13" fill="#9EDDCF"/><circle cx="210" cy="84" r="4" fill="#fff" opacity="0.9"/>
+<g class="m-bub b1"><circle cx="214" cy="80" r="7" fill="#9EDDCF"/></g><g class="m-bub b2"><circle cx="214" cy="80" r="5" fill="#9EDDCF"/></g><g class="m-bub b3"><circle cx="214" cy="80" r="3.5" fill="#9EDDCF"/></g>
+<g class="m-orbit orbit-full"><circle class="m-bub" cx="214" cy="60" r="5" fill="#9EDDCF"/><circle class="m-bub" cx="240" cy="96" r="3.5" fill="#9EDDCF"/><circle class="m-bub" cx="190" cy="104" r="3" fill="#9EDDCF"/></g>
+<g class="v v-dots" fill="#9EDDCF"><circle cx="238" cy="62" r="3"/><circle cx="250" cy="56" r="3"/><circle cx="262" cy="50" r="3"/></g></g>
+<path class="spark" d="M150 150 L154 160 L164 164 L154 168 L150 178 L146 168 L136 164 L146 160 Z" fill="#FFD95A"/>
+<path class="spark s2" d="M262 142 L265 150 L273 153 L265 156 L262 164 L259 156 L251 153 L259 150 Z" fill="#FFD95A"/>
+<path class="spark s3" d="M282 196 L284 201 L289 203 L284 205 L282 210 L280 205 L275 203 L280 201 Z" fill="#9EDDCF"/>
+<ellipse cx="146" cy="386" rx="22" ry="9" fill="#E996AA"/><ellipse cx="254" cy="386" rx="22" ry="9" fill="#E996AA"/>
+<g class="m-body">
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="url(#mj2)"/>
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="none" stroke="#FFD8E0" stroke-width="2" opacity="0.7"/>
+<path d="M110 232 C126 206 150 190 176 186" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity="0.5"/>
+<g fill="#fff" opacity="0.7"><circle cx="102" cy="268" r="1.8"/><circle cx="130" cy="364" r="1.4"/><circle cx="290" cy="232" r="1.8"/><circle cx="312" cy="322" r="1.4"/><circle cx="214" cy="350" r="1.6"/><circle cx="252" cy="372" r="1.4"/><circle cx="160" cy="214" r="1.2"/></g>
+<path d="M140 246 Q158 236 176 244" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<path d="M224 244 Q242 236 260 246" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<g class="v v-open"><g class="eye"><circle cx="158" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="158" cy="279" r="15" fill="#3E2D55"/><circle cx="158" cy="280" r="9" fill="#221628"/><circle cx="150" cy="268" r="7.5" fill="#fff"/><circle cx="166" cy="286" r="3" fill="#fff"/></g></g>
+<g class="eye"><circle cx="242" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="242" cy="279" r="15" fill="#3E2D55"/><circle cx="242" cy="280" r="9" fill="#221628"/><circle cx="234" cy="268" r="7.5" fill="#fff"/><circle cx="250" cy="286" r="3" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="5" stroke-linecap="round"><path d="M140 280 Q158 262 176 280"/><path d="M224 280 Q242 262 260 280"/></g>
+<g class="v v-half"><path d="M139 276 A19 19 0 0 0 177 276 Z" fill="#221628"/><path d="M223 276 A19 19 0 0 0 261 276 Z" fill="#221628"/>
+<line x1="136" y1="276" x2="180" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/><line x1="220" y1="276" x2="264" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/></g>
+<ellipse cx="124" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/><ellipse cx="276" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/>
+<g class="v v-smile"><path d="M178 304 Q200 338 222 304 Q200 312 178 304 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M188 320 Q200 334 212 320 Q200 326 188 320 Z" fill="#F07C9A"/></g>
+<g class="v v-o"><ellipse cx="200" cy="316" rx="11" ry="13" fill="#5A2338"/><ellipse cx="200" cy="323" rx="6" ry="4" fill="#F07C9A"/></g>
+<g class="v v-chew"><path class="chew" d="M182 314 Q191 306 200 314 Q209 322 218 314" fill="none" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="188" y1="316" x2="212" y2="316" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M170 300 Q200 350 230 300 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M184 322 Q200 342 216 322 Q200 330 184 322 Z" fill="#F07C9A"/></g>
+</g></g></svg></span></div>
+    <div class="field"><span>Language you speak</span><b>English ▾</b></div>
+    <div class="field"><span>Summarise as</span><b>Meeting notes ▾</b></div>
+    <span class="btn stop wide">● Start recording</span><p class="mins">312 minutes left this month</p><div class="nav"><span class=""><em>▤</em>Library</span><span class=""><em>✓</em>Actions</span><span class=""><em>⌕</em>Search</span><span class=""><em>⚙</em>Settings</span></div></div><figcaption><b>Record (opened from the button)</b><small>No tab: reached only from the button</small></figcaption></figure>
+<figure><div class="phone"><div class="sb"><span>9:41</span><span>▮▮▮ 82%</span></div><h2 class="ph">Recording</h2>
+    <div class="stage"><span class="mullo st-listening"><svg width="150" height="158" viewBox="0 0 400 420" aria-hidden="true">
+<defs><radialGradient id="mj3" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="0.6" stop-color="#F7BFC9"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<circle cx="200" cy="290" r="168" fill="#9EDDCF" opacity="0.05"/>
+<path d="M44 250 A160 160 0 0 0 44 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<path d="M356 250 A160 160 0 0 1 356 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<g fill="#9EDDCF"><rect class="bar" x="268" y="44" width="9" height="20" rx="4.5"/><rect class="bar d1" x="283" y="30" width="10" height="48" rx="5"/><rect class="bar d2" x="299" y="40" width="9" height="28" rx="4.5"/><rect class="bar d3" x="314" y="34" width="10" height="40" rx="5"/><rect class="bar d4" x="330" y="46" width="9" height="16" rx="4.5"/></g>
+<ellipse cx="200" cy="396" rx="176" ry="18" fill="#132A2D"/><ellipse cx="200" cy="392" rx="176" ry="18" fill="#1A3639"/>
+<ellipse cx="200" cy="392" rx="176" ry="18" fill="none" stroke="#9EDDCF" stroke-width="1" opacity="0.3"/>
+<ellipse class="shadow" cx="200" cy="388" rx="120" ry="8" fill="#000" opacity="0.3"/>
+<g class="m-bounce"><g class="m-antenna">
+<path d="M200 182 C192 164 214 152 205 134 C198 120 214 110 214 98" fill="none" stroke="#F4BCC8" stroke-width="8" stroke-linecap="round"/>
+<circle class="tip" cx="214" cy="88" r="13" fill="#9EDDCF"/><circle cx="210" cy="84" r="4" fill="#fff" opacity="0.9"/>
+<g class="m-bub b1"><circle cx="214" cy="80" r="7" fill="#9EDDCF"/></g><g class="m-bub b2"><circle cx="214" cy="80" r="5" fill="#9EDDCF"/></g><g class="m-bub b3"><circle cx="214" cy="80" r="3.5" fill="#9EDDCF"/></g>
+<g class="m-orbit orbit-full"><circle class="m-bub" cx="214" cy="60" r="5" fill="#9EDDCF"/><circle class="m-bub" cx="240" cy="96" r="3.5" fill="#9EDDCF"/><circle class="m-bub" cx="190" cy="104" r="3" fill="#9EDDCF"/></g>
+<g class="v v-dots" fill="#9EDDCF"><circle cx="238" cy="62" r="3"/><circle cx="250" cy="56" r="3"/><circle cx="262" cy="50" r="3"/></g></g>
+<path class="spark" d="M150 150 L154 160 L164 164 L154 168 L150 178 L146 168 L136 164 L146 160 Z" fill="#FFD95A"/>
+<path class="spark s2" d="M262 142 L265 150 L273 153 L265 156 L262 164 L259 156 L251 153 L259 150 Z" fill="#FFD95A"/>
+<path class="spark s3" d="M282 196 L284 201 L289 203 L284 205 L282 210 L280 205 L275 203 L280 201 Z" fill="#9EDDCF"/>
+<ellipse cx="146" cy="386" rx="22" ry="9" fill="#E996AA"/><ellipse cx="254" cy="386" rx="22" ry="9" fill="#E996AA"/>
+<g class="m-body">
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="url(#mj3)"/>
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="none" stroke="#FFD8E0" stroke-width="2" opacity="0.7"/>
+<path d="M110 232 C126 206 150 190 176 186" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity="0.5"/>
+<g fill="#fff" opacity="0.7"><circle cx="102" cy="268" r="1.8"/><circle cx="130" cy="364" r="1.4"/><circle cx="290" cy="232" r="1.8"/><circle cx="312" cy="322" r="1.4"/><circle cx="214" cy="350" r="1.6"/><circle cx="252" cy="372" r="1.4"/><circle cx="160" cy="214" r="1.2"/></g>
+<path d="M140 246 Q158 236 176 244" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<path d="M224 244 Q242 236 260 246" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<g class="v v-open"><g class="eye"><circle cx="158" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="158" cy="279" r="15" fill="#3E2D55"/><circle cx="158" cy="280" r="9" fill="#221628"/><circle cx="150" cy="268" r="7.5" fill="#fff"/><circle cx="166" cy="286" r="3" fill="#fff"/></g></g>
+<g class="eye"><circle cx="242" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="242" cy="279" r="15" fill="#3E2D55"/><circle cx="242" cy="280" r="9" fill="#221628"/><circle cx="234" cy="268" r="7.5" fill="#fff"/><circle cx="250" cy="286" r="3" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="5" stroke-linecap="round"><path d="M140 280 Q158 262 176 280"/><path d="M224 280 Q242 262 260 280"/></g>
+<g class="v v-half"><path d="M139 276 A19 19 0 0 0 177 276 Z" fill="#221628"/><path d="M223 276 A19 19 0 0 0 261 276 Z" fill="#221628"/>
+<line x1="136" y1="276" x2="180" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/><line x1="220" y1="276" x2="264" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/></g>
+<ellipse cx="124" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/><ellipse cx="276" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/>
+<g class="v v-smile"><path d="M178 304 Q200 338 222 304 Q200 312 178 304 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M188 320 Q200 334 212 320 Q200 326 188 320 Z" fill="#F07C9A"/></g>
+<g class="v v-o"><ellipse cx="200" cy="316" rx="11" ry="13" fill="#5A2338"/><ellipse cx="200" cy="323" rx="6" ry="4" fill="#F07C9A"/></g>
+<g class="v v-chew"><path class="chew" d="M182 314 Q191 306 200 314 Q209 322 218 314" fill="none" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="188" y1="316" x2="212" y2="316" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M170 300 Q200 350 230 300 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M184 322 Q200 342 216 322 Q200 330 184 322 Z" fill="#F07C9A"/></g>
+</g></g></svg></span></div>
+    <div class="timer">0:12</div><p class="live">"so the plan for Saturday is we leave around nine and..."</p>
+    <div class="row2"><span class="btn ghost">Pause</span><span class="btn stop">■ Stop and mull</span></div><div class="nav"><span class=""><em>▤</em>Library</span><span class=""><em>✓</em>Actions</span><span class=""><em>⌕</em>Search</span><span class=""><em>⚙</em>Settings</span></div></div><figcaption><b>Listening</b><small>Recording on the phone</small></figcaption></figure>
+<figure><div class="phone"><div class="sb"><span>9:41</span><span>▮▮▮ 82%</span></div><h2 class="ph">Library</h2>
+    <div class="banner"><span class="mullo st-mulling"><svg width="64" height="67" viewBox="0 0 400 420" aria-hidden="true">
+<defs><radialGradient id="mj4" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="0.6" stop-color="#F7BFC9"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<circle cx="200" cy="290" r="168" fill="#9EDDCF" opacity="0.05"/>
+<path d="M44 250 A160 160 0 0 0 44 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<path d="M356 250 A160 160 0 0 1 356 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<g fill="#9EDDCF"><rect class="bar" x="268" y="44" width="9" height="20" rx="4.5"/><rect class="bar d1" x="283" y="30" width="10" height="48" rx="5"/><rect class="bar d2" x="299" y="40" width="9" height="28" rx="4.5"/><rect class="bar d3" x="314" y="34" width="10" height="40" rx="5"/><rect class="bar d4" x="330" y="46" width="9" height="16" rx="4.5"/></g>
+<ellipse cx="200" cy="396" rx="176" ry="18" fill="#132A2D"/><ellipse cx="200" cy="392" rx="176" ry="18" fill="#1A3639"/>
+<ellipse cx="200" cy="392" rx="176" ry="18" fill="none" stroke="#9EDDCF" stroke-width="1" opacity="0.3"/>
+<ellipse class="shadow" cx="200" cy="388" rx="120" ry="8" fill="#000" opacity="0.3"/>
+<g class="m-bounce"><g class="m-antenna">
+<path d="M200 182 C192 164 214 152 205 134 C198 120 214 110 214 98" fill="none" stroke="#F4BCC8" stroke-width="8" stroke-linecap="round"/>
+<circle class="tip" cx="214" cy="88" r="13" fill="#9EDDCF"/><circle cx="210" cy="84" r="4" fill="#fff" opacity="0.9"/>
+<g class="m-bub b1"><circle cx="214" cy="80" r="7" fill="#9EDDCF"/></g><g class="m-bub b2"><circle cx="214" cy="80" r="5" fill="#9EDDCF"/></g><g class="m-bub b3"><circle cx="214" cy="80" r="3.5" fill="#9EDDCF"/></g>
+<g class="m-orbit orbit-full"><circle class="m-bub" cx="214" cy="60" r="5" fill="#9EDDCF"/><circle class="m-bub" cx="240" cy="96" r="3.5" fill="#9EDDCF"/><circle class="m-bub" cx="190" cy="104" r="3" fill="#9EDDCF"/></g>
+<g class="v v-dots" fill="#9EDDCF"><circle cx="238" cy="62" r="3"/><circle cx="250" cy="56" r="3"/><circle cx="262" cy="50" r="3"/></g></g>
+<path class="spark" d="M150 150 L154 160 L164 164 L154 168 L150 178 L146 168 L136 164 L146 160 Z" fill="#FFD95A"/>
+<path class="spark s2" d="M262 142 L265 150 L273 153 L265 156 L262 164 L259 156 L251 153 L259 150 Z" fill="#FFD95A"/>
+<path class="spark s3" d="M282 196 L284 201 L289 203 L284 205 L282 210 L280 205 L275 203 L280 201 Z" fill="#9EDDCF"/>
+<ellipse cx="146" cy="386" rx="22" ry="9" fill="#E996AA"/><ellipse cx="254" cy="386" rx="22" ry="9" fill="#E996AA"/>
+<g class="m-body">
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="url(#mj4)"/>
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="none" stroke="#FFD8E0" stroke-width="2" opacity="0.7"/>
+<path d="M110 232 C126 206 150 190 176 186" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity="0.5"/>
+<g fill="#fff" opacity="0.7"><circle cx="102" cy="268" r="1.8"/><circle cx="130" cy="364" r="1.4"/><circle cx="290" cy="232" r="1.8"/><circle cx="312" cy="322" r="1.4"/><circle cx="214" cy="350" r="1.6"/><circle cx="252" cy="372" r="1.4"/><circle cx="160" cy="214" r="1.2"/></g>
+<path d="M140 246 Q158 236 176 244" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<path d="M224 244 Q242 236 260 246" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<g class="v v-open"><g class="eye"><circle cx="158" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="158" cy="279" r="15" fill="#3E2D55"/><circle cx="158" cy="280" r="9" fill="#221628"/><circle cx="150" cy="268" r="7.5" fill="#fff"/><circle cx="166" cy="286" r="3" fill="#fff"/></g></g>
+<g class="eye"><circle cx="242" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="242" cy="279" r="15" fill="#3E2D55"/><circle cx="242" cy="280" r="9" fill="#221628"/><circle cx="234" cy="268" r="7.5" fill="#fff"/><circle cx="250" cy="286" r="3" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="5" stroke-linecap="round"><path d="M140 280 Q158 262 176 280"/><path d="M224 280 Q242 262 260 280"/></g>
+<g class="v v-half"><path d="M139 276 A19 19 0 0 0 177 276 Z" fill="#221628"/><path d="M223 276 A19 19 0 0 0 261 276 Z" fill="#221628"/>
+<line x1="136" y1="276" x2="180" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/><line x1="220" y1="276" x2="264" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/></g>
+<ellipse cx="124" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/><ellipse cx="276" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/>
+<g class="v v-smile"><path d="M178 304 Q200 338 222 304 Q200 312 178 304 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M188 320 Q200 334 212 320 Q200 326 188 320 Z" fill="#F07C9A"/></g>
+<g class="v v-o"><ellipse cx="200" cy="316" rx="11" ry="13" fill="#5A2338"/><ellipse cx="200" cy="323" rx="6" ry="4" fill="#F07C9A"/></g>
+<g class="v v-chew"><path class="chew" d="M182 314 Q191 306 200 314 Q209 322 218 314" fill="none" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="188" y1="316" x2="212" y2="316" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M170 300 Q200 350 230 300 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M184 322 Q200 342 216 322 Q200 330 184 322 Z" fill="#F07C9A"/></g>
+</g></g></svg></span><div><b>Mulling it over</b><small>Weekend plan · 4:31 · about 30 s</small></div></div>
+    <div class="li"><b>Standup, Tuesday</b><small>Today 9:02 · 2 to do</small></div><div class="li"><b>Call with Dana</b><small>Yesterday · 1 to do</small></div><div class="li"><b>Idea: garden shed</b><small>Mon · note</small></div><div class="li"><b>Dentist follow-up</b><small>Sun · 1 to do</small></div><span class="fab"><span class="mullo st-mulling"><svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mm5" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<g class="m-bounce"><g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"/><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"/><g class="m-orbit orbit-mini"><circle class="m-bub" cx="53" cy="2" r="2.6" fill="#9EDDCF"/><circle class="m-bub" cx="65" cy="15" r="2" fill="#9EDDCF"/><circle class="m-bub" cx="41" cy="17" r="1.8" fill="#9EDDCF"/></g></g>
+<g class="m-body"><path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mm5)"/>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#fff"/></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"/><path d="M55 64 Q62 56 69 64"/></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"/><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"/></g>
+<ellipse cx="27" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/><ellipse cx="73" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"/></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"/></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"/></g>
+</g></g></svg></span></span><div class="nav"><span class="on"><em>▤</em>Library</span><span class=""><em>✓</em>Actions</span><span class=""><em>⌕</em>Search</span><span class=""><em>⚙</em>Settings</span></div></div><figcaption><b>Mulling</b><small>Transcribing and summarising: the button chews too</small></figcaption></figure>
+<figure><div class="phone"><div class="sb"><span>9:41</span><span>▮▮▮ 82%</span></div><h2 class="ph">Library</h2>
+    <div class="banner ready"><span class="mullo st-ready"><svg width="64" height="67" viewBox="0 0 400 420" aria-hidden="true">
+<defs><radialGradient id="mj6" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="0.6" stop-color="#F7BFC9"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<circle cx="200" cy="290" r="168" fill="#9EDDCF" opacity="0.05"/>
+<path d="M44 250 A160 160 0 0 0 44 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<path d="M356 250 A160 160 0 0 1 356 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<g fill="#9EDDCF"><rect class="bar" x="268" y="44" width="9" height="20" rx="4.5"/><rect class="bar d1" x="283" y="30" width="10" height="48" rx="5"/><rect class="bar d2" x="299" y="40" width="9" height="28" rx="4.5"/><rect class="bar d3" x="314" y="34" width="10" height="40" rx="5"/><rect class="bar d4" x="330" y="46" width="9" height="16" rx="4.5"/></g>
+<ellipse cx="200" cy="396" rx="176" ry="18" fill="#132A2D"/><ellipse cx="200" cy="392" rx="176" ry="18" fill="#1A3639"/>
+<ellipse cx="200" cy="392" rx="176" ry="18" fill="none" stroke="#9EDDCF" stroke-width="1" opacity="0.3"/>
+<ellipse class="shadow" cx="200" cy="388" rx="120" ry="8" fill="#000" opacity="0.3"/>
+<g class="m-bounce"><g class="m-antenna">
+<path d="M200 182 C192 164 214 152 205 134 C198 120 214 110 214 98" fill="none" stroke="#F4BCC8" stroke-width="8" stroke-linecap="round"/>
+<circle class="tip" cx="214" cy="88" r="13" fill="#9EDDCF"/><circle cx="210" cy="84" r="4" fill="#fff" opacity="0.9"/>
+<g class="m-bub b1"><circle cx="214" cy="80" r="7" fill="#9EDDCF"/></g><g class="m-bub b2"><circle cx="214" cy="80" r="5" fill="#9EDDCF"/></g><g class="m-bub b3"><circle cx="214" cy="80" r="3.5" fill="#9EDDCF"/></g>
+<g class="m-orbit orbit-full"><circle class="m-bub" cx="214" cy="60" r="5" fill="#9EDDCF"/><circle class="m-bub" cx="240" cy="96" r="3.5" fill="#9EDDCF"/><circle class="m-bub" cx="190" cy="104" r="3" fill="#9EDDCF"/></g>
+<g class="v v-dots" fill="#9EDDCF"><circle cx="238" cy="62" r="3"/><circle cx="250" cy="56" r="3"/><circle cx="262" cy="50" r="3"/></g></g>
+<path class="spark" d="M150 150 L154 160 L164 164 L154 168 L150 178 L146 168 L136 164 L146 160 Z" fill="#FFD95A"/>
+<path class="spark s2" d="M262 142 L265 150 L273 153 L265 156 L262 164 L259 156 L251 153 L259 150 Z" fill="#FFD95A"/>
+<path class="spark s3" d="M282 196 L284 201 L289 203 L284 205 L282 210 L280 205 L275 203 L280 201 Z" fill="#9EDDCF"/>
+<ellipse cx="146" cy="386" rx="22" ry="9" fill="#E996AA"/><ellipse cx="254" cy="386" rx="22" ry="9" fill="#E996AA"/>
+<g class="m-body">
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="url(#mj6)"/>
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="none" stroke="#FFD8E0" stroke-width="2" opacity="0.7"/>
+<path d="M110 232 C126 206 150 190 176 186" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity="0.5"/>
+<g fill="#fff" opacity="0.7"><circle cx="102" cy="268" r="1.8"/><circle cx="130" cy="364" r="1.4"/><circle cx="290" cy="232" r="1.8"/><circle cx="312" cy="322" r="1.4"/><circle cx="214" cy="350" r="1.6"/><circle cx="252" cy="372" r="1.4"/><circle cx="160" cy="214" r="1.2"/></g>
+<path d="M140 246 Q158 236 176 244" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<path d="M224 244 Q242 236 260 246" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<g class="v v-open"><g class="eye"><circle cx="158" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="158" cy="279" r="15" fill="#3E2D55"/><circle cx="158" cy="280" r="9" fill="#221628"/><circle cx="150" cy="268" r="7.5" fill="#fff"/><circle cx="166" cy="286" r="3" fill="#fff"/></g></g>
+<g class="eye"><circle cx="242" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="242" cy="279" r="15" fill="#3E2D55"/><circle cx="242" cy="280" r="9" fill="#221628"/><circle cx="234" cy="268" r="7.5" fill="#fff"/><circle cx="250" cy="286" r="3" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="5" stroke-linecap="round"><path d="M140 280 Q158 262 176 280"/><path d="M224 280 Q242 262 260 280"/></g>
+<g class="v v-half"><path d="M139 276 A19 19 0 0 0 177 276 Z" fill="#221628"/><path d="M223 276 A19 19 0 0 0 261 276 Z" fill="#221628"/>
+<line x1="136" y1="276" x2="180" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/><line x1="220" y1="276" x2="264" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/></g>
+<ellipse cx="124" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/><ellipse cx="276" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/>
+<g class="v v-smile"><path d="M178 304 Q200 338 222 304 Q200 312 178 304 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M188 320 Q200 334 212 320 Q200 326 188 320 Z" fill="#F07C9A"/></g>
+<g class="v v-o"><ellipse cx="200" cy="316" rx="11" ry="13" fill="#5A2338"/><ellipse cx="200" cy="323" rx="6" ry="4" fill="#F07C9A"/></g>
+<g class="v v-chew"><path class="chew" d="M182 314 Q191 306 200 314 Q209 322 218 314" fill="none" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="188" y1="316" x2="212" y2="316" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M170 300 Q200 350 230 300 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M184 322 Q200 342 216 322 Q200 330 184 322 Z" fill="#F07C9A"/></g>
+</g></g></svg></span><div><b>Ready: Weekend plan</b><small>3 actions · tap to open</small></div></div>
+    <div class="li"><b>Standup, Tuesday</b><small>Today 9:02 · 2 to do</small></div><div class="li"><b>Call with Dana</b><small>Yesterday · 1 to do</small></div><div class="li"><b>Idea: garden shed</b><small>Mon · note</small></div><div class="li"><b>Dentist follow-up</b><small>Sun · 1 to do</small></div><span class="fab"><span class="mullo st-ready"><svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mm7" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<path class="spark" d="M18 30 L20 35 L25 37 L20 39 L18 44 L16 39 L11 37 L16 35 Z" fill="#FFD95A"/><path class="spark s2" d="M80 26 L82 30 L86 32 L82 34 L80 38 L78 34 L74 32 L78 30 Z" fill="#9EDDCF"/><g class="m-bounce"><g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"/><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"/></g>
+<g class="m-body"><path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mm7)"/>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#fff"/></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"/><path d="M55 64 Q62 56 69 64"/></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"/><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"/></g>
+<ellipse cx="27" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/><ellipse cx="73" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"/></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"/></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"/></g>
+</g></g></svg></span></span><div class="nav"><span class="on"><em>▤</em>Library</span><span class=""><em>✓</em>Actions</span><span class=""><em>⌕</em>Search</span><span class=""><em>⚙</em>Settings</span></div></div><figcaption><b>Ready</b><small>Summary and actions are done</small></figcaption></figure>
+<figure><div class="phone"><div class="sb"><span>9:41</span><span>▮▮▮ 82%</span></div><h2 class="ph">Library</h2>
+    <div class="stage tall"><span class="mullo st-idle"><svg width="140" height="147" viewBox="0 0 400 420" aria-hidden="true">
+<defs><radialGradient id="mj8" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="0.6" stop-color="#F7BFC9"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<circle cx="200" cy="290" r="168" fill="#9EDDCF" opacity="0.05"/>
+<path d="M44 250 A160 160 0 0 0 44 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<path d="M356 250 A160 160 0 0 1 356 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<g fill="#9EDDCF"><rect class="bar" x="268" y="44" width="9" height="20" rx="4.5"/><rect class="bar d1" x="283" y="30" width="10" height="48" rx="5"/><rect class="bar d2" x="299" y="40" width="9" height="28" rx="4.5"/><rect class="bar d3" x="314" y="34" width="10" height="40" rx="5"/><rect class="bar d4" x="330" y="46" width="9" height="16" rx="4.5"/></g>
+<ellipse cx="200" cy="396" rx="176" ry="18" fill="#132A2D"/><ellipse cx="200" cy="392" rx="176" ry="18" fill="#1A3639"/>
+<ellipse cx="200" cy="392" rx="176" ry="18" fill="none" stroke="#9EDDCF" stroke-width="1" opacity="0.3"/>
+<ellipse class="shadow" cx="200" cy="388" rx="120" ry="8" fill="#000" opacity="0.3"/>
+<g class="m-bounce"><g class="m-antenna">
+<path d="M200 182 C192 164 214 152 205 134 C198 120 214 110 214 98" fill="none" stroke="#F4BCC8" stroke-width="8" stroke-linecap="round"/>
+<circle class="tip" cx="214" cy="88" r="13" fill="#9EDDCF"/><circle cx="210" cy="84" r="4" fill="#fff" opacity="0.9"/>
+<g class="m-bub b1"><circle cx="214" cy="80" r="7" fill="#9EDDCF"/></g><g class="m-bub b2"><circle cx="214" cy="80" r="5" fill="#9EDDCF"/></g><g class="m-bub b3"><circle cx="214" cy="80" r="3.5" fill="#9EDDCF"/></g>
+<g class="m-orbit orbit-full"><circle class="m-bub" cx="214" cy="60" r="5" fill="#9EDDCF"/><circle class="m-bub" cx="240" cy="96" r="3.5" fill="#9EDDCF"/><circle class="m-bub" cx="190" cy="104" r="3" fill="#9EDDCF"/></g>
+<g class="v v-dots" fill="#9EDDCF"><circle cx="238" cy="62" r="3"/><circle cx="250" cy="56" r="3"/><circle cx="262" cy="50" r="3"/></g></g>
+<path class="spark" d="M150 150 L154 160 L164 164 L154 168 L150 178 L146 168 L136 164 L146 160 Z" fill="#FFD95A"/>
+<path class="spark s2" d="M262 142 L265 150 L273 153 L265 156 L262 164 L259 156 L251 153 L259 150 Z" fill="#FFD95A"/>
+<path class="spark s3" d="M282 196 L284 201 L289 203 L284 205 L282 210 L280 205 L275 203 L280 201 Z" fill="#9EDDCF"/>
+<ellipse cx="146" cy="386" rx="22" ry="9" fill="#E996AA"/><ellipse cx="254" cy="386" rx="22" ry="9" fill="#E996AA"/>
+<g class="m-body">
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="url(#mj8)"/>
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="none" stroke="#FFD8E0" stroke-width="2" opacity="0.7"/>
+<path d="M110 232 C126 206 150 190 176 186" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity="0.5"/>
+<g fill="#fff" opacity="0.7"><circle cx="102" cy="268" r="1.8"/><circle cx="130" cy="364" r="1.4"/><circle cx="290" cy="232" r="1.8"/><circle cx="312" cy="322" r="1.4"/><circle cx="214" cy="350" r="1.6"/><circle cx="252" cy="372" r="1.4"/><circle cx="160" cy="214" r="1.2"/></g>
+<path d="M140 246 Q158 236 176 244" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<path d="M224 244 Q242 236 260 246" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<g class="v v-open"><g class="eye"><circle cx="158" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="158" cy="279" r="15" fill="#3E2D55"/><circle cx="158" cy="280" r="9" fill="#221628"/><circle cx="150" cy="268" r="7.5" fill="#fff"/><circle cx="166" cy="286" r="3" fill="#fff"/></g></g>
+<g class="eye"><circle cx="242" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="242" cy="279" r="15" fill="#3E2D55"/><circle cx="242" cy="280" r="9" fill="#221628"/><circle cx="234" cy="268" r="7.5" fill="#fff"/><circle cx="250" cy="286" r="3" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="5" stroke-linecap="round"><path d="M140 280 Q158 262 176 280"/><path d="M224 280 Q242 262 260 280"/></g>
+<g class="v v-half"><path d="M139 276 A19 19 0 0 0 177 276 Z" fill="#221628"/><path d="M223 276 A19 19 0 0 0 261 276 Z" fill="#221628"/>
+<line x1="136" y1="276" x2="180" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/><line x1="220" y1="276" x2="264" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/></g>
+<ellipse cx="124" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/><ellipse cx="276" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/>
+<g class="v v-smile"><path d="M178 304 Q200 338 222 304 Q200 312 178 304 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M188 320 Q200 334 212 320 Q200 326 188 320 Z" fill="#F07C9A"/></g>
+<g class="v v-o"><ellipse cx="200" cy="316" rx="11" ry="13" fill="#5A2338"/><ellipse cx="200" cy="323" rx="6" ry="4" fill="#F07C9A"/></g>
+<g class="v v-chew"><path class="chew" d="M182 314 Q191 306 200 314 Q209 322 218 314" fill="none" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="188" y1="316" x2="212" y2="316" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M170 300 Q200 350 230 300 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M184 322 Q200 342 216 322 Q200 330 184 322 Z" fill="#F07C9A"/></g>
+</g></g></svg></span></div>
+    <p class="empty"><b>Nothing to mull yet</b>Tap Mullo below to record a meeting or a thought, or use your watch.</p>
+    <span class="hint">↘</span><span class="fab"><span class="mullo st-idle"><svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mm9" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<g class="m-bounce"><g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"/><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"/></g>
+<g class="m-body"><path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mm9)"/>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#fff"/></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"/><path d="M55 64 Q62 56 69 64"/></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"/><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"/></g>
+<ellipse cx="27" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/><ellipse cx="73" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"/></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"/></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"/></g>
+</g></g></svg></span></span><div class="nav"><span class="on"><em>▤</em>Library</span><span class=""><em>✓</em>Actions</span><span class=""><em>⌕</em>Search</span><span class=""><em>⚙</em>Settings</span></div></div><figcaption><b>Empty library</b><small>First open, nothing recorded yet</small></figcaption></figure>
+<figure><div class="phone"><div class="sb"><span>9:41</span><span>▮▮▮ 82%</span></div><h2 class="ph">Weekend plan</h2>
+    <p class="meta">Sat 10 Oct · 4:31 · Meeting notes</p>
+    <h3 class="sec">Summary</h3><p class="body">Leave around nine for the lake. Dana brings the cooler, you pick up the kids at 8:30. Back by six for dinner at your mom's.</p>
+    <h3 class="sec">Actions</h3><div class="todo">☐ Book the parking spot</div><div class="todo">☐ Charge the camera</div><div class="todo">☐ Text mom about dinner</div>
+    <span class="fab still"><span class="mullo st-idle"><svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mm10" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<g class="m-bounce"><g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"/><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"/></g>
+<g class="m-body"><path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mm10)"/>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#fff"/></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"/><path d="M55 64 Q62 56 69 64"/></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"/><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"/></g>
+<ellipse cx="27" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/><ellipse cx="73" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"/></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"/></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"/></g>
+</g></g></svg></span></span><div class="nav"><span class="on"><em>▤</em>Library</span><span class=""><em>✓</em>Actions</span><span class=""><em>⌕</em>Search</span><span class=""><em>⚙</em>Settings</span></div></div><figcaption><b>Reading</b><small>Calm on purpose: only the button, standing still</small></figcaption></figure>
+<figure><div class="phone cur"><div class="sb"><span>9:41</span><span>▮▮▮ 82%</span></div><h2 class="ph">Library</h2>
+<div class="banner"><span class="mullo st-ready"><svg width="64" height="67" viewBox="0 0 400 420" aria-hidden="true">
+<defs><radialGradient id="mj11" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="0.6" stop-color="#F7BFC9"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<circle cx="200" cy="290" r="168" fill="#9EDDCF" opacity="0.05"/>
+<path d="M44 250 A160 160 0 0 0 44 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<path d="M356 250 A160 160 0 0 1 356 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<g fill="#9EDDCF"><rect class="bar" x="268" y="44" width="9" height="20" rx="4.5"/><rect class="bar d1" x="283" y="30" width="10" height="48" rx="5"/><rect class="bar d2" x="299" y="40" width="9" height="28" rx="4.5"/><rect class="bar d3" x="314" y="34" width="10" height="40" rx="5"/><rect class="bar d4" x="330" y="46" width="9" height="16" rx="4.5"/></g>
+<ellipse cx="200" cy="396" rx="176" ry="18" fill="#132A2D"/><ellipse cx="200" cy="392" rx="176" ry="18" fill="#1A3639"/>
+<ellipse cx="200" cy="392" rx="176" ry="18" fill="none" stroke="#9EDDCF" stroke-width="1" opacity="0.3"/>
+<ellipse class="shadow" cx="200" cy="388" rx="120" ry="8" fill="#000" opacity="0.3"/>
+<g class="m-bounce"><g class="m-antenna">
+<path d="M200 182 C192 164 214 152 205 134 C198 120 214 110 214 98" fill="none" stroke="#F4BCC8" stroke-width="8" stroke-linecap="round"/>
+<circle class="tip" cx="214" cy="88" r="13" fill="#9EDDCF"/><circle cx="210" cy="84" r="4" fill="#fff" opacity="0.9"/>
+<g class="m-bub b1"><circle cx="214" cy="80" r="7" fill="#9EDDCF"/></g><g class="m-bub b2"><circle cx="214" cy="80" r="5" fill="#9EDDCF"/></g><g class="m-bub b3"><circle cx="214" cy="80" r="3.5" fill="#9EDDCF"/></g>
+<g class="m-orbit orbit-full"><circle class="m-bub" cx="214" cy="60" r="5" fill="#9EDDCF"/><circle class="m-bub" cx="240" cy="96" r="3.5" fill="#9EDDCF"/><circle class="m-bub" cx="190" cy="104" r="3" fill="#9EDDCF"/></g>
+<g class="v v-dots" fill="#9EDDCF"><circle cx="238" cy="62" r="3"/><circle cx="250" cy="56" r="3"/><circle cx="262" cy="50" r="3"/></g></g>
+<path class="spark" d="M150 150 L154 160 L164 164 L154 168 L150 178 L146 168 L136 164 L146 160 Z" fill="#FFD95A"/>
+<path class="spark s2" d="M262 142 L265 150 L273 153 L265 156 L262 164 L259 156 L251 153 L259 150 Z" fill="#FFD95A"/>
+<path class="spark s3" d="M282 196 L284 201 L289 203 L284 205 L282 210 L280 205 L275 203 L280 201 Z" fill="#9EDDCF"/>
+<ellipse cx="146" cy="386" rx="22" ry="9" fill="#E996AA"/><ellipse cx="254" cy="386" rx="22" ry="9" fill="#E996AA"/>
+<g class="m-body">
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="url(#mj11)"/>
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="none" stroke="#FFD8E0" stroke-width="2" opacity="0.7"/>
+<path d="M110 232 C126 206 150 190 176 186" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity="0.5"/>
+<g fill="#fff" opacity="0.7"><circle cx="102" cy="268" r="1.8"/><circle cx="130" cy="364" r="1.4"/><circle cx="290" cy="232" r="1.8"/><circle cx="312" cy="322" r="1.4"/><circle cx="214" cy="350" r="1.6"/><circle cx="252" cy="372" r="1.4"/><circle cx="160" cy="214" r="1.2"/></g>
+<path d="M140 246 Q158 236 176 244" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<path d="M224 244 Q242 236 260 246" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<g class="v v-open"><g class="eye"><circle cx="158" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="158" cy="279" r="15" fill="#3E2D55"/><circle cx="158" cy="280" r="9" fill="#221628"/><circle cx="150" cy="268" r="7.5" fill="#fff"/><circle cx="166" cy="286" r="3" fill="#fff"/></g></g>
+<g class="eye"><circle cx="242" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="242" cy="279" r="15" fill="#3E2D55"/><circle cx="242" cy="280" r="9" fill="#221628"/><circle cx="234" cy="268" r="7.5" fill="#fff"/><circle cx="250" cy="286" r="3" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="5" stroke-linecap="round"><path d="M140 280 Q158 262 176 280"/><path d="M224 280 Q242 262 260 280"/></g>
+<g class="v v-half"><path d="M139 276 A19 19 0 0 0 177 276 Z" fill="#221628"/><path d="M223 276 A19 19 0 0 0 261 276 Z" fill="#221628"/>
+<line x1="136" y1="276" x2="180" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/><line x1="220" y1="276" x2="264" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/></g>
+<ellipse cx="124" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/><ellipse cx="276" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/>
+<g class="v v-smile"><path d="M178 304 Q200 338 222 304 Q200 312 178 304 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M188 320 Q200 334 212 320 Q200 326 188 320 Z" fill="#F07C9A"/></g>
+<g class="v v-o"><ellipse cx="200" cy="316" rx="11" ry="13" fill="#5A2338"/><ellipse cx="200" cy="323" rx="6" ry="4" fill="#F07C9A"/></g>
+<g class="v v-chew"><path class="chew" d="M182 314 Q191 306 200 314 Q209 322 218 314" fill="none" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="188" y1="316" x2="212" y2="316" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M170 300 Q200 350 230 300 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M184 322 Q200 342 216 322 Q200 330 184 322 Z" fill="#F07C9A"/></g>
+</g></g></svg></span><div><b>Ready: Weekend plan</b><small>3 actions · tap to open</small></div></div>
+<div class="li"><b>Standup, Tuesday</b><small>Today 9:02 · 2 to do</small></div><div class="li"><b>Call with Dana</b><small>Yesterday · 1 to do</small></div><div class="li"><b>Idea: garden shed</b><small>Mon · note</small></div><div class="li"><b>Dentist follow-up</b><small>Sun · 1 to do</small></div><span class="fab"><span class="mullo st-idle"><svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mm12" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<g class="m-bounce"><g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"/><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"/></g>
+<g class="m-body"><path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mm12)"/>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#fff"/></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"/><path d="M55 64 Q62 56 69 64"/></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"/><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"/></g>
+<ellipse cx="27" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/><ellipse cx="73" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"/></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"/></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"/></g>
+</g></g></svg></span></span><div class="nav"><span class="on"><em>▤</em>Library</span><span class=""><em>✓</em>Actions</span><span class=""><em>⌕</em>Search</span><span class=""><em>⚙</em>Settings</span></div></div>
+<figcaption><b>Current Mullo colours</b><small>Black with the blue accent, to compare</small></figcaption></figure>
+</div>
+<div class="grid" style="margin-top:22px">
+<figure><div class="toast"><span class="mullo st-silent"><svg width="74" height="78" viewBox="0 0 400 420" aria-hidden="true">
+<defs><radialGradient id="mj13" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="0.6" stop-color="#F7BFC9"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<circle cx="200" cy="290" r="168" fill="#9EDDCF" opacity="0.05"/>
+<path d="M44 250 A160 160 0 0 0 44 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<path d="M356 250 A160 160 0 0 1 356 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<g fill="#9EDDCF"><rect class="bar" x="268" y="44" width="9" height="20" rx="4.5"/><rect class="bar d1" x="283" y="30" width="10" height="48" rx="5"/><rect class="bar d2" x="299" y="40" width="9" height="28" rx="4.5"/><rect class="bar d3" x="314" y="34" width="10" height="40" rx="5"/><rect class="bar d4" x="330" y="46" width="9" height="16" rx="4.5"/></g>
+<ellipse cx="200" cy="396" rx="176" ry="18" fill="#132A2D"/><ellipse cx="200" cy="392" rx="176" ry="18" fill="#1A3639"/>
+<ellipse cx="200" cy="392" rx="176" ry="18" fill="none" stroke="#9EDDCF" stroke-width="1" opacity="0.3"/>
+<ellipse class="shadow" cx="200" cy="388" rx="120" ry="8" fill="#000" opacity="0.3"/>
+<g class="m-bounce"><g class="m-antenna">
+<path d="M200 182 C192 164 214 152 205 134 C198 120 214 110 214 98" fill="none" stroke="#F4BCC8" stroke-width="8" stroke-linecap="round"/>
+<circle class="tip" cx="214" cy="88" r="13" fill="#9EDDCF"/><circle cx="210" cy="84" r="4" fill="#fff" opacity="0.9"/>
+<g class="m-bub b1"><circle cx="214" cy="80" r="7" fill="#9EDDCF"/></g><g class="m-bub b2"><circle cx="214" cy="80" r="5" fill="#9EDDCF"/></g><g class="m-bub b3"><circle cx="214" cy="80" r="3.5" fill="#9EDDCF"/></g>
+<g class="m-orbit orbit-full"><circle class="m-bub" cx="214" cy="60" r="5" fill="#9EDDCF"/><circle class="m-bub" cx="240" cy="96" r="3.5" fill="#9EDDCF"/><circle class="m-bub" cx="190" cy="104" r="3" fill="#9EDDCF"/></g>
+<g class="v v-dots" fill="#9EDDCF"><circle cx="238" cy="62" r="3"/><circle cx="250" cy="56" r="3"/><circle cx="262" cy="50" r="3"/></g></g>
+<path class="spark" d="M150 150 L154 160 L164 164 L154 168 L150 178 L146 168 L136 164 L146 160 Z" fill="#FFD95A"/>
+<path class="spark s2" d="M262 142 L265 150 L273 153 L265 156 L262 164 L259 156 L251 153 L259 150 Z" fill="#FFD95A"/>
+<path class="spark s3" d="M282 196 L284 201 L289 203 L284 205 L282 210 L280 205 L275 203 L280 201 Z" fill="#9EDDCF"/>
+<ellipse cx="146" cy="386" rx="22" ry="9" fill="#E996AA"/><ellipse cx="254" cy="386" rx="22" ry="9" fill="#E996AA"/>
+<g class="m-body">
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="url(#mj13)"/>
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="none" stroke="#FFD8E0" stroke-width="2" opacity="0.7"/>
+<path d="M110 232 C126 206 150 190 176 186" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity="0.5"/>
+<g fill="#fff" opacity="0.7"><circle cx="102" cy="268" r="1.8"/><circle cx="130" cy="364" r="1.4"/><circle cx="290" cy="232" r="1.8"/><circle cx="312" cy="322" r="1.4"/><circle cx="214" cy="350" r="1.6"/><circle cx="252" cy="372" r="1.4"/><circle cx="160" cy="214" r="1.2"/></g>
+<path d="M140 246 Q158 236 176 244" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<path d="M224 244 Q242 236 260 246" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<g class="v v-open"><g class="eye"><circle cx="158" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="158" cy="279" r="15" fill="#3E2D55"/><circle cx="158" cy="280" r="9" fill="#221628"/><circle cx="150" cy="268" r="7.5" fill="#fff"/><circle cx="166" cy="286" r="3" fill="#fff"/></g></g>
+<g class="eye"><circle cx="242" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="242" cy="279" r="15" fill="#3E2D55"/><circle cx="242" cy="280" r="9" fill="#221628"/><circle cx="234" cy="268" r="7.5" fill="#fff"/><circle cx="250" cy="286" r="3" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="5" stroke-linecap="round"><path d="M140 280 Q158 262 176 280"/><path d="M224 280 Q242 262 260 280"/></g>
+<g class="v v-half"><path d="M139 276 A19 19 0 0 0 177 276 Z" fill="#221628"/><path d="M223 276 A19 19 0 0 0 261 276 Z" fill="#221628"/>
+<line x1="136" y1="276" x2="180" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/><line x1="220" y1="276" x2="264" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/></g>
+<ellipse cx="124" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/><ellipse cx="276" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/>
+<g class="v v-smile"><path d="M178 304 Q200 338 222 304 Q200 312 178 304 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M188 320 Q200 334 212 320 Q200 326 188 320 Z" fill="#F07C9A"/></g>
+<g class="v v-o"><ellipse cx="200" cy="316" rx="11" ry="13" fill="#5A2338"/><ellipse cx="200" cy="323" rx="6" ry="4" fill="#F07C9A"/></g>
+<g class="v v-chew"><path class="chew" d="M182 314 Q191 306 200 314 Q209 322 218 314" fill="none" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="188" y1="316" x2="212" y2="316" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M170 300 Q200 350 230 300 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M184 322 Q200 342 216 322 Q200 330 184 322 Z" fill="#F07C9A"/></g>
+</g></g></svg></span><div><b>No speech heard</b><small>Nothing was sent to the AI</small></div></div><figcaption><small>No speech: looks around, a thought trails off</small></figcaption></figure>
+<figure><div class="toast"><span class="mullo st-offline"><svg width="74" height="78" viewBox="0 0 400 420" aria-hidden="true">
+<defs><radialGradient id="mj14" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="0.6" stop-color="#F7BFC9"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<circle cx="200" cy="290" r="168" fill="#9EDDCF" opacity="0.05"/>
+<path d="M44 250 A160 160 0 0 0 44 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<path d="M356 250 A160 160 0 0 1 356 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"/>
+<g fill="#9EDDCF"><rect class="bar" x="268" y="44" width="9" height="20" rx="4.5"/><rect class="bar d1" x="283" y="30" width="10" height="48" rx="5"/><rect class="bar d2" x="299" y="40" width="9" height="28" rx="4.5"/><rect class="bar d3" x="314" y="34" width="10" height="40" rx="5"/><rect class="bar d4" x="330" y="46" width="9" height="16" rx="4.5"/></g>
+<ellipse cx="200" cy="396" rx="176" ry="18" fill="#132A2D"/><ellipse cx="200" cy="392" rx="176" ry="18" fill="#1A3639"/>
+<ellipse cx="200" cy="392" rx="176" ry="18" fill="none" stroke="#9EDDCF" stroke-width="1" opacity="0.3"/>
+<ellipse class="shadow" cx="200" cy="388" rx="120" ry="8" fill="#000" opacity="0.3"/>
+<g class="m-bounce"><g class="m-antenna">
+<path d="M200 182 C192 164 214 152 205 134 C198 120 214 110 214 98" fill="none" stroke="#F4BCC8" stroke-width="8" stroke-linecap="round"/>
+<circle class="tip" cx="214" cy="88" r="13" fill="#9EDDCF"/><circle cx="210" cy="84" r="4" fill="#fff" opacity="0.9"/>
+<g class="m-bub b1"><circle cx="214" cy="80" r="7" fill="#9EDDCF"/></g><g class="m-bub b2"><circle cx="214" cy="80" r="5" fill="#9EDDCF"/></g><g class="m-bub b3"><circle cx="214" cy="80" r="3.5" fill="#9EDDCF"/></g>
+<g class="m-orbit orbit-full"><circle class="m-bub" cx="214" cy="60" r="5" fill="#9EDDCF"/><circle class="m-bub" cx="240" cy="96" r="3.5" fill="#9EDDCF"/><circle class="m-bub" cx="190" cy="104" r="3" fill="#9EDDCF"/></g>
+<g class="v v-dots" fill="#9EDDCF"><circle cx="238" cy="62" r="3"/><circle cx="250" cy="56" r="3"/><circle cx="262" cy="50" r="3"/></g></g>
+<path class="spark" d="M150 150 L154 160 L164 164 L154 168 L150 178 L146 168 L136 164 L146 160 Z" fill="#FFD95A"/>
+<path class="spark s2" d="M262 142 L265 150 L273 153 L265 156 L262 164 L259 156 L251 153 L259 150 Z" fill="#FFD95A"/>
+<path class="spark s3" d="M282 196 L284 201 L289 203 L284 205 L282 210 L280 205 L275 203 L280 201 Z" fill="#9EDDCF"/>
+<ellipse cx="146" cy="386" rx="22" ry="9" fill="#E996AA"/><ellipse cx="254" cy="386" rx="22" ry="9" fill="#E996AA"/>
+<g class="m-body">
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="url(#mj14)"/>
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="none" stroke="#FFD8E0" stroke-width="2" opacity="0.7"/>
+<path d="M110 232 C126 206 150 190 176 186" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity="0.5"/>
+<g fill="#fff" opacity="0.7"><circle cx="102" cy="268" r="1.8"/><circle cx="130" cy="364" r="1.4"/><circle cx="290" cy="232" r="1.8"/><circle cx="312" cy="322" r="1.4"/><circle cx="214" cy="350" r="1.6"/><circle cx="252" cy="372" r="1.4"/><circle cx="160" cy="214" r="1.2"/></g>
+<path d="M140 246 Q158 236 176 244" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<path d="M224 244 Q242 236 260 246" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"/>
+<g class="v v-open"><g class="eye"><circle cx="158" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="158" cy="279" r="15" fill="#3E2D55"/><circle cx="158" cy="280" r="9" fill="#221628"/><circle cx="150" cy="268" r="7.5" fill="#fff"/><circle cx="166" cy="286" r="3" fill="#fff"/></g></g>
+<g class="eye"><circle cx="242" cy="276" r="21" fill="#221628"/><g class="pupil"><circle cx="242" cy="279" r="15" fill="#3E2D55"/><circle cx="242" cy="280" r="9" fill="#221628"/><circle cx="234" cy="268" r="7.5" fill="#fff"/><circle cx="250" cy="286" r="3" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="5" stroke-linecap="round"><path d="M140 280 Q158 262 176 280"/><path d="M224 280 Q242 262 260 280"/></g>
+<g class="v v-half"><path d="M139 276 A19 19 0 0 0 177 276 Z" fill="#221628"/><path d="M223 276 A19 19 0 0 0 261 276 Z" fill="#221628"/>
+<line x1="136" y1="276" x2="180" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/><line x1="220" y1="276" x2="264" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"/></g>
+<ellipse cx="124" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/><ellipse cx="276" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"/>
+<g class="v v-smile"><path d="M178 304 Q200 338 222 304 Q200 312 178 304 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M188 320 Q200 334 212 320 Q200 326 188 320 Z" fill="#F07C9A"/></g>
+<g class="v v-o"><ellipse cx="200" cy="316" rx="11" ry="13" fill="#5A2338"/><ellipse cx="200" cy="323" rx="6" ry="4" fill="#F07C9A"/></g>
+<g class="v v-chew"><path class="chew" d="M182 314 Q191 306 200 314 Q209 322 218 314" fill="none" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="188" y1="316" x2="212" y2="316" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M170 300 Q200 350 230 300 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"/><path d="M184 322 Q200 342 216 322 Q200 330 184 322 Z" fill="#F07C9A"/></g>
+</g></g></svg></span><div><b>Connection dropped · will retry</b><small>Your recording is safe on this phone</small></div></div><figcaption><small>Offline: antenna droops, bubble goes grey</small></figcaption></figure>
+</div>
+
+<h2 class="sect">Watch</h2>
+<div class="grid">
+<figure><div class="watch"><span class="mullo st-listening"><svg width="92" height="92" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mm15" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<g class="m-bounce"><g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"/><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"/></g>
+<g class="m-body"><path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mm15)"/>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#fff"/></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"/><path d="M55 64 Q62 56 69 64"/></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"/><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"/></g>
+<ellipse cx="27" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/><ellipse cx="73" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"/></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"/></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"/></g>
+</g></g></svg></span><div class="big">0:12</div><span class="wbtn">■ Stop</span></div><figcaption><b>Mullo on the watch</b><small>Recording, the mascot bobs to your voice</small></figcaption></figure>
+<figure><div class="watch face"><div class="clock">10:42</div><div class="date">FRI 9</div><div class="comp"><span class="mullo st-idle"><svg width="50" height="50" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mm16" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<g class="m-bounce"><g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"/><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"/></g>
+<g class="m-body"><path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mm16)"/>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#fff"/></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"/><path d="M55 64 Q62 56 69 64"/></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"/><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"/></g>
+<ellipse cx="27" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/><ellipse cx="73" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"/></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"/></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"/></g>
+</g></g></svg></span><small>Rec</small></div></div><figcaption><b>Watch face button: Idle</b><small>Tap to record</small></figcaption></figure>
+<figure><div class="watch face"><div class="clock">10:42</div><div class="date">FRI 9</div><div class="comp"><span class="mullo st-listening"><svg width="50" height="50" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mm17" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<g class="m-bounce"><g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"/><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"/></g>
+<g class="m-body"><path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mm17)"/>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#fff"/></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"/><path d="M55 64 Q62 56 69 64"/></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"/><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"/></g>
+<ellipse cx="27" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/><ellipse cx="73" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"/></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"/></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"/></g>
+</g></g></svg></span><small>0:12</small></div></div><figcaption><b>Watch face button: Listening</b><small>Tap to stop and send</small></figcaption></figure>
+<figure><div class="watch face"><div class="clock">10:42</div><div class="date">FRI 9</div><div class="comp"><span class="mullo st-mulling"><svg width="50" height="50" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mm18" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<g class="m-bounce"><g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"/><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"/><g class="m-orbit orbit-mini"><circle class="m-bub" cx="53" cy="2" r="2.6" fill="#9EDDCF"/><circle class="m-bub" cx="65" cy="15" r="2" fill="#9EDDCF"/><circle class="m-bub" cx="41" cy="17" r="1.8" fill="#9EDDCF"/></g></g>
+<g class="m-body"><path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mm18)"/>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#fff"/></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"/><path d="M55 64 Q62 56 69 64"/></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"/><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"/></g>
+<ellipse cx="27" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/><ellipse cx="73" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"/></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"/></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"/></g>
+</g></g></svg></span><small>...</small></div></div><figcaption><b>Watch face button: Mulling</b><small>Phone is working on it</small></figcaption></figure>
+<figure><div class="watch face"><div class="clock">10:42</div><div class="date">FRI 9</div><div class="comp"><span class="mullo st-ready"><svg width="50" height="50" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mm19" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<path class="spark" d="M18 30 L20 35 L25 37 L20 39 L18 44 L16 39 L11 37 L16 35 Z" fill="#FFD95A"/><path class="spark s2" d="M80 26 L82 30 L86 32 L82 34 L80 38 L78 34 L74 32 L78 30 Z" fill="#9EDDCF"/><g class="m-bounce"><g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"/><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"/></g>
+<g class="m-body"><path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mm19)"/>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#fff"/></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"/><path d="M55 64 Q62 56 69 64"/></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"/><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"/></g>
+<ellipse cx="27" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/><ellipse cx="73" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"/></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"/></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"/></g>
+</g></g></svg></span><small>3 tasks</small></div></div><figcaption><b>Watch face button: Ready</b><small>Summary is done</small></figcaption></figure>
+<figure><div class="watch face"><div class="clock">10:42</div><div class="date">FRI 9</div><div class="comp mono"><svg width="38" height="38" viewBox="0 0 100 100" aria-hidden="true">
+<path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#e6e6e6" stroke-width="5" stroke-linecap="round"/><circle cx="53" cy="12" r="6" fill="#e6e6e6"/>
+<path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="none" stroke="#e6e6e6" stroke-width="6" stroke-linejoin="round"/>
+<circle cx="38" cy="62" r="6" fill="#e6e6e6"/><circle cx="62" cy="62" r="6" fill="#e6e6e6"/>
+<path d="M43 73 Q50 82 57 73" fill="none" stroke="#e6e6e6" stroke-width="4" stroke-linecap="round"/></svg><small>Rec</small></div></div><figcaption><b>One-colour slot</b><small>Some faces allow only one colour</small></figcaption></figure>
+</div>
+<p class="note" style="margin-top:12px;max-width:900px">Mulling and Ready on the watch need a new status message from the phone. By itself the watch only knows Idle, Listening and "waiting to send".</p>
+
+<h2 class="sect">App icon on the phone</h2>
+<div class="grid">
+<figure><div class="home">
+<div class="app"><span class="ic plain"><i></i></span>Photos</div><div class="app"><span class="ic plain"><i></i></span>Maps</div>
+<div class="app"><span class="ic still"><span class="mullo st-idle"><svg width="50" height="50" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mm20" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<g class="m-bounce"><g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"/><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"/></g>
+<g class="m-body"><path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mm20)"/>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#fff"/></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"/><path d="M55 64 Q62 56 69 64"/></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"/><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"/></g>
+<ellipse cx="27" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/><ellipse cx="73" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"/></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"/></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"/></g>
+</g></g></svg></span></span>Mullo</div><div class="app"><span class="ic plain"><i></i></span>Clock</div>
+</div><figcaption><b>Normal icon</b><small>Mascot head on dark teal, still</small></figcaption></figure>
+<figure><div class="home" style="grid-template-columns:repeat(3,1fr)">
+<div class="app"><span class="ic still"><span class="mullo st-idle"><svg width="50" height="50" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mm21" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<g class="m-bounce"><g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"/><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"/></g>
+<g class="m-body"><path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mm21)"/>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#fff"/></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"/><path d="M55 64 Q62 56 69 64"/></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"/><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"/></g>
+<ellipse cx="27" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/><ellipse cx="73" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"/></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"/></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"/></g>
+</g></g></svg></span></span>Idle</div>
+<div class="app"><span class="ic still"><span class="mullo st-mulling"><svg width="50" height="50" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mm22" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<g class="m-bounce"><g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"/><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"/><g class="m-orbit orbit-mini"><circle class="m-bub" cx="53" cy="2" r="2.6" fill="#9EDDCF"/><circle class="m-bub" cx="65" cy="15" r="2" fill="#9EDDCF"/><circle class="m-bub" cx="41" cy="17" r="1.8" fill="#9EDDCF"/></g></g>
+<g class="m-body"><path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mm22)"/>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#fff"/></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"/><path d="M55 64 Q62 56 69 64"/></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"/><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"/></g>
+<ellipse cx="27" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/><ellipse cx="73" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"/></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"/></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"/></g>
+</g></g></svg></span></span>Mulling</div>
+<div class="app"><span class="ic still"><span class="mullo st-ready"><svg width="50" height="50" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mm23" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"/><stop offset="1" stop-color="#E996AA"/></radialGradient></defs>
+<path class="spark" d="M18 30 L20 35 L25 37 L20 39 L18 44 L16 39 L11 37 L16 35 Z" fill="#FFD95A"/><path class="spark s2" d="M80 26 L82 30 L86 32 L82 34 L80 38 L78 34 L74 32 L78 30 Z" fill="#9EDDCF"/><g class="m-bounce"><g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"/><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"/></g>
+<g class="m-body"><path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mm23)"/>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#fff"/></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"/><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#fff"/></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"/><path d="M55 64 Q62 56 69 64"/></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"/><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"/></g>
+<ellipse cx="27" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/><ellipse cx="73" cy="72" rx="5" ry="3" fill="#EE8DA2" opacity="0.7"/>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"/></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"/></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"/></g>
+</g></g></svg></span></span>Ready</div>
+</div><figcaption><b>Mood icons (the Duolingo trick)</b><small>Swapped while Mullo is closed, e.g. a watch note being made ready</small></figcaption></figure>
+<figure><div class="home" style="grid-template-columns:repeat(2,1fr);width:200px;background:linear-gradient(160deg,#4d6b62,#2f4a45)">
+<div class="app"><span class="ic themed"><svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true">
+<path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#244540" stroke-width="5" stroke-linecap="round"/><circle cx="53" cy="12" r="6" fill="#244540"/>
+<path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="none" stroke="#244540" stroke-width="6" stroke-linejoin="round"/>
+<circle cx="38" cy="62" r="6" fill="#244540"/><circle cx="62" cy="62" r="6" fill="#244540"/>
+<path d="M43 73 Q50 82 57 73" fill="none" stroke="#244540" stroke-width="4" stroke-linecap="round"/></svg></span>Mullo</div><div class="app"><span class="ic plain"><i></i></span>Clock</div>
+</div><figcaption><b>Themed icon (Android 13+)</b><small>Android tints it to match the wallpaper</small></figcaption></figure>
+</div>
+</body></html>

@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mullo in motion</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,800&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#9EDDCF}a:hover{color:#C9F0E6}
+.mullo .m-body,.mullo .eye,.mullo .chew,.mullo .m-antenna,.mullo .m-bounce,.mullo .bar,.mullo .spark,.mullo .shadow{transform-box:fill-box;transform-origin:50% 100%}
+.mullo .eye,.mullo .chew,.mullo .bar,.mullo .spark{transform-origin:50% 50%}
+.mullo .v{opacity:0;transition:opacity .18s ease}
+.mullo .m-bub{opacity:0}
+.st-idle .v-open,.st-idle .v-smile,.st-listening .v-open,.st-listening .v-o,.st-mulling .v-closed,.st-mulling .v-chew,.st-ready .v-closed,.st-ready .v-big,.st-silent .v-open,.st-silent .v-flat,.st-silent .v-dots,.st-offline .v-half,.st-offline .v-flat{opacity:1}
+@keyframes mBreathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.02,.975)}}
+@keyframes mTalk{0%,100%{transform:scale(1,1)}30%{transform:scale(1.035,.955)}60%{transform:scale(.985,1.02)}}
+@keyframes mBlink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
+@keyframes mSway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+@keyframes mRise{0%{transform:translate(0,0) scale(.3);opacity:0}15%{opacity:.9}100%{transform:translate(46px,-120px) scale(1.1);opacity:0}}
+@keyframes mOrbit{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+@keyframes mChew{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.35)}}
+@keyframes mBar{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+@keyframes mHop{0%,40%,100%{transform:translateY(0)}12%{transform:translateY(-28px)}24%{transform:translateY(0)}31%{transform:translateY(-8px)}}
+@keyframes mShadow{0%,40%,100%{transform:scaleX(1);opacity:.3}12%{transform:scaleX(.7);opacity:.15}}
+@keyframes mPop{0%,100%{transform:scale(0);opacity:0}15%{transform:scale(1.2);opacity:1}40%{transform:scale(1);opacity:1}60%{transform:scale(0);opacity:0}}
+@keyframes mLook{0%,20%,100%{transform:translateX(0)}35%,50%{transform:translateX(-5px)}65%,80%{transform:translateX(5px)}}
+@keyframes mDots{0%,100%{opacity:.25}50%{opacity:1}}
+.mullo .m-body{animation:mBreathe 3.2s ease-in-out infinite}
+.mullo .eye{animation:mBlink 4.4s infinite}
+.mullo .m-antenna{animation:mSway 3.6s ease-in-out infinite}
+.mullo .bar{opacity:.35}
+.st-listening .m-body{animation:mTalk .5s ease-in-out infinite}
+.st-listening .m-antenna{animation:mSway 1s ease-in-out infinite}
+.st-listening .m-bub{animation:mRise 1.8s ease-out infinite}
+.st-listening .m-bub.b2{animation-delay:.6s}
+.st-listening .m-bub.b3{animation-delay:1.2s}
+.st-listening .bar{opacity:1;animation:mBar .6s ease-in-out infinite}
+.st-listening .bar.d1{animation-delay:.1s}.st-listening .bar.d2{animation-delay:.25s}.st-listening .bar.d3{animation-delay:.4s}.st-listening .bar.d4{animation-delay:.15s}
+.st-mulling .m-orbit{animation:mOrbit 2.6s linear infinite}
+.st-mulling .m-orbit .m-bub{opacity:.8}
+.st-mulling .chew{animation:mChew .38s ease-in-out infinite}
+.st-mulling .m-body{animation:mBreathe 1.4s ease-in-out infinite}
+.st-mulling .bar{opacity:.6;animation:mBar 1.8s ease-in-out infinite}
+.st-ready .m-bounce{animation:mHop 2.2s ease-out infinite}
+.st-ready .shadow{animation:mShadow 2.2s ease-out infinite}
+.st-ready .spark{animation:mPop 2.2s ease-out infinite}
+.st-ready .spark.s2{animation-delay:.12s}.st-ready .spark.s3{animation-delay:.24s}
+.st-ready .bar{opacity:1}
+.st-silent .pupil{animation:mLook 2.8s ease-in-out infinite}
+.st-silent .v-dots circle{animation:mDots 1.2s ease-in-out infinite}
+.st-silent .v-dots circle:nth-child(2){animation-delay:.2s}.st-silent .v-dots circle:nth-child(3){animation-delay:.4s}
+.st-offline .m-antenna{animation:none;transform:rotate(38deg)}
+.st-offline .m-body{animation:mBreathe 5s ease-in-out infinite}
+.st-offline .tip{fill:#6B7F82}
+.st-offline .bar{opacity:.12}
+.spark{opacity:0}
+@media (prefers-reduced-motion: reduce){.mullo *{animation:none !important}}
+</style>
+</helmet>
+<div class="{{rootClass}}" style="width: 1280px; height: 900px; box-sizing: border-box; background: #0B181B; color: #EAF6F3; font-family: 'Bricolage Grotesque', Georgia, serif; padding: 48px; display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 40px">
+
+<div style="background: #0E1D20; border: 1px solid #1E3538; border-radius: 28px; display: flex; flex-direction: column; justify-content: space-between; padding: 32px; overflow: hidden">
+<div style="display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 15px; letter-spacing: 0.08em; color: #7FA9A2">
+<span>MULLO / IN MOTION</span>
+<span>{{stateCode}}</span>
+</div>
+<div style="display: flex; justify-content: center; align-items: center; flex-grow: 1">
+<svg width="640" height="660" viewBox="0 0 400 420" role="img" aria-label="{{ariaLabel}}">
+<defs>
+<radialGradient id="mJelly" cx="0.4" cy="0.35" r="0.75">
+<stop offset="0" stop-color="#FFE6EC"></stop>
+<stop offset="0.6" stop-color="#F7BFC9"></stop>
+<stop offset="1" stop-color="#E996AA"></stop>
+</radialGradient>
+</defs>
+<circle cx="200" cy="290" r="168" fill="#9EDDCF" opacity="0.05"></circle>
+<path d="M44 250 A160 160 0 0 0 44 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"></path>
+<path d="M356 250 A160 160 0 0 1 356 350" fill="none" stroke="#9EDDCF" stroke-width="2.2" stroke-dasharray="0.1 7" stroke-linecap="round" opacity="0.5"></path>
+<g fill="#9EDDCF">
+<rect class="bar" x="268" y="44" width="9" height="20" rx="4.5"></rect>
+<rect class="bar d1" x="283" y="30" width="10" height="48" rx="5"></rect>
+<rect class="bar d2" x="299" y="40" width="9" height="28" rx="4.5"></rect>
+<rect class="bar d3" x="314" y="34" width="10" height="40" rx="5"></rect>
+<rect class="bar d4" x="330" y="46" width="9" height="16" rx="4.5"></rect>
+</g>
+<ellipse cx="200" cy="396" rx="176" ry="18" fill="#132A2D"></ellipse>
+<ellipse cx="200" cy="392" rx="176" ry="18" fill="#1A3639"></ellipse>
+<ellipse cx="200" cy="392" rx="176" ry="18" fill="none" stroke="#9EDDCF" stroke-width="1" opacity="0.3"></ellipse>
+<ellipse class="shadow" cx="200" cy="388" rx="120" ry="8" fill="#000000" opacity="0.3"></ellipse>
+<g class="m-bounce">
+<g class="m-antenna">
+<path d="M200 182 C192 164 214 152 205 134 C198 120 214 110 214 98" fill="none" stroke="#F4BCC8" stroke-width="8" stroke-linecap="round"></path>
+<circle class="tip" cx="214" cy="88" r="13" fill="#9EDDCF"></circle>
+<circle cx="210" cy="84" r="4" fill="#FFFFFF" opacity="0.9"></circle>
+<g class="m-bub b1"><circle cx="214" cy="80" r="7" fill="#9EDDCF"></circle></g>
+<g class="m-bub b2"><circle cx="214" cy="80" r="5" fill="#9EDDCF"></circle></g>
+<g class="m-bub b3"><circle cx="214" cy="80" r="3.5" fill="#9EDDCF"></circle></g>
+<g class="m-orbit" style="transform-box: view-box; transform-origin: 214px 88px">
+<circle class="m-bub" cx="214" cy="60" r="5" fill="#9EDDCF"></circle>
+<circle class="m-bub" cx="240" cy="96" r="3.5" fill="#9EDDCF"></circle>
+<circle class="m-bub" cx="190" cy="104" r="3" fill="#9EDDCF"></circle>
+</g>
+<g class="v v-dots" fill="#9EDDCF"><circle cx="238" cy="62" r="3"></circle><circle cx="250" cy="56" r="3"></circle><circle cx="262" cy="50" r="3"></circle></g>
+</g>
+<path class="spark" d="M150 150 L154 160 L164 164 L154 168 L150 178 L146 168 L136 164 L146 160 Z" fill="#FFD95A"></path>
+<path class="spark s2" d="M262 142 L265 150 L273 153 L265 156 L262 164 L259 156 L251 153 L259 150 Z" fill="#FFD95A"></path>
+<path class="spark s3" d="M282 196 L284 201 L289 203 L284 205 L282 210 L280 205 L275 203 L280 201 Z" fill="#9EDDCF"></path>
+<ellipse cx="146" cy="386" rx="22" ry="9" fill="#E996AA"></ellipse>
+<ellipse cx="254" cy="386" rx="22" ry="9" fill="#E996AA"></ellipse>
+<g class="m-body">
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="url(#mJelly)"></path>
+<path d="M68 382 C58 276 100 178 200 178 C300 178 342 276 332 382 Q200 402 68 382 Z" fill="none" stroke="#FFD8E0" stroke-width="2" opacity="0.7"></path>
+<path d="M110 232 C126 206 150 190 176 186" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" opacity="0.5"></path>
+<g fill="#FFFFFF" opacity="0.7"><circle cx="102" cy="268" r="1.8"></circle><circle cx="130" cy="364" r="1.4"></circle><circle cx="290" cy="232" r="1.8"></circle><circle cx="312" cy="322" r="1.4"></circle><circle cx="214" cy="350" r="1.6"></circle><circle cx="252" cy="372" r="1.4"></circle><circle cx="160" cy="214" r="1.2"></circle></g>
+<path d="M140 246 Q158 236 176 244" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"></path>
+<path d="M224 244 Q242 236 260 246" fill="none" stroke="#5A2A44" stroke-width="4" stroke-linecap="round"></path>
+<g class="v v-open">
+<g class="eye"><circle cx="158" cy="276" r="21" fill="#221628"></circle><g class="pupil"><circle cx="158" cy="279" r="15" fill="#3E2D55"></circle><circle cx="158" cy="280" r="9" fill="#221628"></circle><circle cx="150" cy="268" r="7.5" fill="#FFFFFF"></circle><circle cx="166" cy="286" r="3" fill="#FFFFFF"></circle></g></g>
+<g class="eye"><circle cx="242" cy="276" r="21" fill="#221628"></circle><g class="pupil"><circle cx="242" cy="279" r="15" fill="#3E2D55"></circle><circle cx="242" cy="280" r="9" fill="#221628"></circle><circle cx="234" cy="268" r="7.5" fill="#FFFFFF"></circle><circle cx="250" cy="286" r="3" fill="#FFFFFF"></circle></g></g>
+</g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="5" stroke-linecap="round">
+<path d="M140 280 Q158 262 176 280"></path><path d="M224 280 Q242 262 260 280"></path>
+</g>
+<g class="v v-half">
+<path d="M139 276 A19 19 0 0 0 177 276 Z" fill="#221628"></path><path d="M223 276 A19 19 0 0 0 261 276 Z" fill="#221628"></path>
+<line x1="136" y1="276" x2="180" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"></line><line x1="220" y1="276" x2="264" y2="276" stroke="#221628" stroke-width="4" stroke-linecap="round"></line>
+</g>
+<ellipse cx="124" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"></ellipse>
+<ellipse cx="276" cy="310" rx="16" ry="9" fill="#EE8DA2" opacity="0.75"></ellipse>
+<g class="v v-smile"><path d="M178 304 Q200 338 222 304 Q200 312 178 304 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"></path><path d="M188 320 Q200 334 212 320 Q200 326 188 320 Z" fill="#F07C9A"></path></g>
+<g class="v v-o"><ellipse cx="200" cy="316" rx="11" ry="13" fill="#5A2338"></ellipse><ellipse cx="200" cy="323" rx="6" ry="4" fill="#F07C9A"></ellipse></g>
+<g class="v v-chew"><path class="chew" d="M182 314 Q191 306 200 314 Q209 322 218 314" fill="none" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"></path></g>
+<g class="v v-flat"><line x1="188" y1="316" x2="212" y2="316" stroke="#5A2338" stroke-width="4.5" stroke-linecap="round"></line></g>
+<g class="v v-big"><path d="M170 300 Q200 350 230 300 Z" fill="#5A2338" stroke="#5A2338" stroke-width="3" stroke-linejoin="round"></path><path d="M184 322 Q200 342 216 322 Q200 330 184 322 Z" fill="#F07C9A"></path></g>
+</g>
+</g>
+</svg>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: flex-end">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 44px; font-weight: 800; letter-spacing: -0.03em; line-height: 1">{{stateName}}</span>
+<span style="font-size: 18px; color: #A9C9C3">{{stateDesc}}</span>
+</div>
+<span style="font-family: 'DM Mono', monospace; font-size: 14px; color: #7FA9A2">pure SVG + CSS · no libraries</span>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 28px; padding-top: 8px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-size: 48px; font-weight: 800; letter-spacing: -0.03em; line-height: 1">mullo<span style="color: #9EDDCF">.</span> moods</h1>
+<p style="margin: 0; font-size: 17px; line-height: 1.45; color: #A9C9C3">One character, six states, each tied to something the app is actually doing. Tap one.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{states}}" as="s" hint-placeholder-count="6">
+<button type="button" onClick="{{s.pick}}" style="{{s.btnStyle}}">
+<span style="font-family: 'DM Mono', monospace; font-size: 13px; width: 22px; opacity: 0.7">{{s.num}}</span>
+<span style="display: flex; flex-direction: column; gap: 2px; text-align: left">
+<span style="font-size: 18px; font-weight: 500">{{s.name}}</span>
+<span style="font-size: 14px; opacity: 0.75">{{s.when}}</span>
+</span>
+</button>
+</sc-for>
+</div>
+
+<div style="background: #13262A; border: 1px solid #1E3538; border-radius: 20px; padding: 18px 20px; display: flex; align-items: center; gap: 16px">
+<span style="width: 64px; height: 64px; border-radius: 50%; background: #0B181B; border: 1px solid #2A4A4E; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+<svg width="52" height="52" viewBox="0 0 100 100" aria-hidden="true">
+<defs><radialGradient id="mJellyMini" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#FFE6EC"></stop><stop offset="1" stop-color="#E996AA"></stop></radialGradient></defs>
+<g class="m-bounce">
+<g class="m-antenna"><path d="M50 36 C46 28 56 24 52 16" fill="none" stroke="#F4BCC8" stroke-width="4" stroke-linecap="round"></path><circle class="tip" cx="53" cy="12" r="5.5" fill="#9EDDCF"></circle></g>
+<g class="m-body">
+<path d="M12 88 C8 58 24 34 50 34 C76 34 92 58 88 88 Q50 95 12 88 Z" fill="url(#mJellyMini)"></path>
+<g class="v v-open"><g class="eye"><circle cx="38" cy="62" r="7" fill="#221628"></circle><g class="pupil"><circle cx="36" cy="59" r="2.6" fill="#FFFFFF"></circle></g></g><g class="eye"><circle cx="62" cy="62" r="7" fill="#221628"></circle><g class="pupil"><circle cx="60" cy="59" r="2.6" fill="#FFFFFF"></circle></g></g></g>
+<g class="v v-closed" fill="none" stroke="#221628" stroke-width="3" stroke-linecap="round"><path d="M31 64 Q38 56 45 64"></path><path d="M55 64 Q62 56 69 64"></path></g>
+<g class="v v-half"><path d="M31 62 A7 7 0 0 0 45 62 Z" fill="#221628"></path><path d="M55 62 A7 7 0 0 0 69 62 Z" fill="#221628"></path></g>
+<g class="v v-smile"><path d="M43 73 Q50 83 57 73 Z" fill="#5A2338"></path></g>
+<g class="v v-o"><ellipse cx="50" cy="76" rx="4" ry="5" fill="#5A2338"></ellipse></g>
+<g class="v v-chew"><path class="chew" d="M43 76 Q46.5 72 50 76 Q53.5 80 57 76" fill="none" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"></path></g>
+<g class="v v-flat"><line x1="45" y1="76" x2="55" y2="76" stroke="#5A2338" stroke-width="2.5" stroke-linecap="round"></line></g>
+<g class="v v-big"><path d="M41 72 Q50 88 59 72 Z" fill="#5A2338"></path></g>
+</g>
+</g>
+</svg>
+</span>
+<span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<span style="font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: #7FA9A2">IN THE APP · RECORD BUTTON</span>
+<span style="font-size: 18px; font-weight: 500">{{appLine}}</span>
+</span>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { picked: 'idle' };
+  }
+  renderVals() {
+    const list = [
+      { id: 'idle', name: 'Idle', when: 'App open, nothing happening', desc: 'Breathes, blinks, antenna sways.', app: 'Tap to record' },
+      { id: 'listening', name: 'Listening', when: 'Recording on phone or watch', desc: 'Bubbles stream up, he bobs to your voice.', app: 'Listening… 0:12' },
+      { id: 'mulling', name: 'Mulling', when: 'Transcribing and summarising', desc: 'Eyes shut, chewing, thoughts orbit.', app: 'Mulling it over' },
+      { id: 'ready', name: 'Ready', when: 'Summary and tasks are done', desc: 'Hops, sparkles, waves light up.', app: 'Ready: Weekend plan · 3 tasks' },
+      { id: 'silent', name: 'No speech', when: 'Silence check found nothing', desc: 'Looks around, a thought trails off.', app: 'No speech heard' },
+      { id: 'offline', name: 'Offline', when: 'Connection dropped, ticket kept', desc: 'Antenna droops, bubble goes grey.', app: 'Connection dropped · will retry' }
+    ];
+    const picked = this.state.picked;
+    const cur = list.find((s) => s.id === picked) || list[0];
+    const base = 'display: flex; align-items: center; gap: 14px; width: 100%; min-height: 60px; padding: 10px 16px; border-radius: 16px; cursor: pointer; font-family: inherit; ';
+    const states = list.map((s, i) => ({
+      num: '0' + (i + 1),
+      name: s.name,
+      when: s.when,
+      btnStyle: s.id === picked
+        ? base + 'background: #9EDDCF; color: #0B181B; border: 1px solid #9EDDCF'
+        : base + 'background: transparent; color: #EAF6F3; border: 1px solid #1E3538',
+      pick: () => this.setState({ picked: s.id })
+    }));
+    return {
+      rootClass: 'mullo st-' + cur.id,
+      states: states,
+      stateName: cur.name,
+      stateDesc: cur.desc,
+      stateCode: 'state="' + cur.id + '"',
+      appLine: cur.app,
+      ariaLabel: 'Mullo, ' + cur.name.toLowerCase() + ': ' + cur.desc
+    };
+  }
+}
+</script>
+</body>
+</html>

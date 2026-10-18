@@ -1,0 +1,22 @@
+Mullo
+Copyright (C) 2026 LizAI Studios
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, version 3 (AGPL-3.0-only). See LICENSE.
+
+In short:
+- You may use, study, change and share Mullo, including for your own business.
+- If you share a changed version, or run one as a service that other people
+  use over a network, you must offer those people your source code under the
+  same license.
+- Mullo comes with no warranty.
+
+The license covers the code. It does not give rights to the Mullo and lizai
+names, logos or icons as used for this product, or to the hosted Mullo Pro
+service. A fork must use its own name and icons so nobody mistakes it for
+the original.
+
+Other licensing: the copyright holder can offer Mullo under other terms (for
+example, to build it into a closed product). Contributions are accepted on
+the terms in CONTRIBUTING.md, which keep that possible.

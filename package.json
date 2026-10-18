@@ -1,0 +1,19 @@
+{
+  "name": "mullo",
+  "version": "0.1.0",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "description": "Voice notes and conversations into a transcript, summary and action items: phone, browser and Wear OS watch.",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "test": "node --test \"tests/**/*.test.mjs\"",
+    "build": "node scripts/build.mjs",
+    "deploy": "node scripts/bump-version.mjs && npm test && node scripts/build.mjs && node scripts/build-web.mjs && cd worker && npx wrangler deploy",
+    "deploy:app": "node scripts/bump-version.mjs && npm test && node scripts/build.mjs",
+    "deploy:web": "npm test && node scripts/build-web.mjs && cd worker && npx wrangler deploy",
+    "bridge": "node bridge/server.mjs",
+    "icons": "node scripts/make-icons.mjs"
+  }
+}

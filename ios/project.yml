@@ -1,0 +1,112 @@
+# Mullo for iPhone + Apple Watch (roadmap S22). XcodeGen spec: run `xcodegen` in this
+# folder to make Mullo.xcodeproj (generated, never committed; see README.md).
+# The signing team is picked in Xcode (Signing & Capabilities) and is never committed.
+name: Mullo
+options:
+  bundleIdPrefix: app.mullo
+  deploymentTarget:
+    iOS: "16.0"
+    watchOS: "9.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0" # App Store Connect's version line (builds 1-2 went up as 1.0; 0.1 made a new line)
+    CURRENT_PROJECT_VERSION: "13" # TestFlight build number: raise it for every upload
+    CODE_SIGN_STYLE: Automatic
+targets:
+  # The iPhone app: Mullo's web app in a WKWebView + the inbox for watch notes.
+  Mullo:
+    type: application
+    platform: iOS
+    sources: [Mullo]
+    scheme: {} # a shared scheme, so command-line builds and archives work without opening Xcode first
+    info:
+      path: Mullo/Info.plist
+      properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleDisplayName: Mullo
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        NSMicrophoneUsageDescription: Mullo records your voice notes and conversations when you press Record.
+        UIBackgroundModes: [audio] # a recording goes on with the phone locked (NativeRecorder.swift)
+        ITSAppUsesNonExemptEncryption: false
+        # mullo://open = "Back to Mullo" on pages Mullo opens in Safari (Google's "connected" page).
+        # It only brings Mullo to the front; MulloApp takes nothing from the link.
+        CFBundleURLTypes:
+          - CFBundleURLName: app.mullo.open
+            CFBundleURLSchemes: [mullo]
+        # S22a: the only site the web view shows. WebKit gives an app-bound domain a service
+        # worker (off in other app web views), which keeps Mullo's screens for opening offline.
+        WKAppBoundDomains: [mullo.lizai.io]
+    # Sign in with Apple (S22b; the capability is on for app.mullo in the developer account).
+    entitlements:
+      path: Mullo/Mullo.entitlements
+      properties:
+        com.apple.developer.applesignin: [Default]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.mullo
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    dependencies:
+      # A watchOS app inside an iPhone app lives in its Watch folder ("Embed Watch Content").
+      - target: MulloWatch
+        embed: true
+        codeSign: false
+        copy:
+          destination: productsDirectory
+          subpath: $(CONTENTS_FOLDER_PATH)/Watch
+
+  # The watch recorder: record, stop, the note goes to the iPhone.
+  MulloWatch:
+    type: application
+    platform: watchOS
+    sources: [MulloWatch]
+    scheme: {}
+    info:
+      path: MulloWatch/Info.plist
+      properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleDisplayName: Mullo
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: app.mullo
+        WKRunsIndependentlyOfCompanionApp: false
+        NSMicrophoneUsageDescription: Mullo records your voice notes when you tap Record.
+        UIBackgroundModes: [audio]
+        # mullo://record = the watch-face complication's tap (MulloWatchApp onOpenURL).
+        CFBundleURLTypes:
+          - CFBundleURLName: app.mullo.record
+            CFBundleURLSchemes: [mullo]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.mullo.watchkitapp
+        TARGETED_DEVICE_FAMILY: "4"
+        SKIP_INSTALL: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    dependencies:
+      - target: MulloComplication
+        embed: true
+
+  # "Mullo record" on the watch face: a WidgetKit complication; a tap opens the watch app
+  # with mullo://record, which starts recording (or stops and sends).
+  MulloComplication:
+    type: app-extension
+    platform: watchOS
+    sources: [MulloComplication]
+    info:
+      path: MulloComplication/Info.plist
+      properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleDisplayName: Mullo
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        # Not .complication: Apple refused to register that id for the team ("not available").
+        PRODUCT_BUNDLE_IDENTIFIER: app.mullo.watchkitapp.record
+        TARGETED_DEVICE_FAMILY: "4"
+        SKIP_INSTALL: YES
+        APPLICATION_EXTENSION_API_ONLY: YES

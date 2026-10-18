@@ -1,0 +1,34 @@
+# Security headers from day one (spec §10). Cloudflare Pages / Netlify format.
+# scripts/build.mjs (and scripts/serve.mjs locally) replace __CONNECT_SRC__
+# with the bridge and Supabase hosts from the environment.
+# style-src has NO 'unsafe-inline': there are no style attributes to allow.
+# Trusted Types: the browser refuses every HTML/script string sink (innerHTML and
+# friends) unless policy "mullo" vouches for it; that policy (app.js) allows only
+# the service worker's address. tests/architecture.test.mjs checks these lines.
+# microphone is the one device permission this app needs.
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  X-Frame-Options: DENY
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  X-Permitted-Cross-Domain-Policies: none
+  Permissions-Policy: microphone=(self), camera=(), geolocation=(), payment=(), usb=(), serial=(), hid=(), midi=(), display-capture=(), accelerometer=(), gyroscope=(), magnetometer=()
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' __CONNECT_SRC__; worker-src 'self'; manifest-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; require-trusted-types-for 'script'; trusted-types mullo
+  Cache-Control: no-cache
+
+# No build step means no fingerprinted file names yet, so every file is
+# revalidated (safe; a round trip each). When a build adds hashes, serve
+# /assets/* with: Cache-Control: public, max-age=31536000, immutable
+# The page itself: no-transform stops Cloudflare injecting its analytics script
+# (Mullo-only; the zone's setting is untouched). Only the HTML: no-transform also
+# turns off compression, which the scripts and styles keep.
+/
+  Cache-Control: no-transform
+/index.html
+  Cache-Control: no-transform
+/version.txt
+  Cache-Control: no-store
+/config.json
+  Cache-Control: no-store

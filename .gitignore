@@ -1,0 +1,17 @@
+node_modules/
+dist/
+app/config.json
+bridge/.tokens.json
+# Real exports from Pocket / Vocci / Plaud stay on this machine only.
+tests/fixtures/private/
+.DS_Store
+.smoke/
+worker/public/
+# iOS: the Xcode project and Info.plists are made by xcodegen from ios/project.yml.
+ios/*.xcodeproj/
+ios/*/Info.plist
+ios/*/*.entitlements
+ios/build/
+xcuserdata/
+DerivedData/
+.superpowers/

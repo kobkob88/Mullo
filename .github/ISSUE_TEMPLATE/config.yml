@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: My account, my notes or a payment
+    url: https://mullo.app
+    about: Use Settings, Help, Report a problem in the Mullo app. Issues here are public.
+  - name: A security weakness
+    url: https://mullo.lizai.io/.well-known/security.txt
+    about: Email hello@lizai.io privately (see SECURITY.md). Please don't open a public issue.
