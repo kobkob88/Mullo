@@ -240,7 +240,8 @@ async function hub() {
 
     adminRows(),
 
-    h('p', { class: 'set-version' }, `- Mullo · Build ${APP_VERSION} -`));
+    h('p', { class: 'set-version' }, `- Mullo · Build ${APP_VERSION} -`),
+    h('p', { class: 'set-version' }, h('a', { href: 'licenses.html' }, 'Open source licences')));
 }
 
 // Task reminders (S47), in the Android app: each kind of notification has its own switch.

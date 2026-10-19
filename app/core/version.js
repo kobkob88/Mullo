@@ -3,7 +3,7 @@
 // higher. tests/architecture.test.mjs fails when this number and version.txt
 // drift; scripts/bump-version.mjs (run by `npm run deploy`) raises both.
 
-export const APP_VERSION = 96;
+export const APP_VERSION = 98;
 
 // Never reload offline (it reloads into nothing) and never while the person
 // is in the middle of something (a recording in progress).

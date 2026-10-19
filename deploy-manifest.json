@@ -2,6 +2,7 @@
   "_comment": "Every file the static host serves. A new file joins this list in the same commit, or the build refuses (scripts/build.mjs) and the tests fail.",
   "files": [
     "index.html",
+    "licenses.html",
     "app.css",
     "app.js",
     "events.js",

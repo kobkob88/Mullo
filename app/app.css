@@ -996,3 +996,4 @@ html { -webkit-tap-highlight-color: transparent; }
   .rec-card.is-current, .today-row.is-current { border-color: var(--accent); }
   .chat-bar { inset-inline-start: calc(var(--rail) + 340px + 40px); inset-inline-end: 40px; }
 }
+.licence-text { white-space: pre-wrap; font-size: 0.8rem; overflow-wrap: anywhere; }

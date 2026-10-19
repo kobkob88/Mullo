@@ -164,7 +164,11 @@ test('version in code matches version.txt', () => {
 // sb_publishable_ key and a <project>.supabase.co address), like Cloud.check in WebFiles.kt.
 // Those prefixes, and that domain, are allowed there and nowhere else; every other pattern
 // still applies to it.
-const SHAPE_CHECKS = { 'core/own-server.js': /sb_(?:secret|publishable)_|supabase\.co/gi };
+// licenses.html quotes the Apache 2.0 text word for word, its own apache.org links included (S17).
+const SHAPE_CHECKS = {
+  'core/own-server.js': /sb_(?:secret|publishable)_|supabase\.co/gi,
+  'licenses.html': /https?:\/\/www\.apache\.org\/licenses\/(?:LICENSE-2\.0)?/gi,
+};
 
 test('no live IDs, keys or URLs in client code', () => {
   const bad = [];

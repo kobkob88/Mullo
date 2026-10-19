@@ -4,7 +4,7 @@
 // Each page is { slug, group, title, intro, body(ctx) }. ctx = { origin, minutes, open },
 // where `open` says whether MCP and API keys are switched on yet (env CONNECTIONS_OPEN).
 
-import { esc, MARK, STYLE_HREF } from './pages.mjs';
+import { esc, MARK, SOURCE_URL, STYLE_HREF } from './pages.mjs';
 
 const GROUPS = ['Start here', 'Using Mullo', 'Plans and AI', 'Server', 'MCP', 'API', 'More'];
 
@@ -633,7 +633,7 @@ ${doc.body(ctx)}
   ${prev ? `<a class="card" href="${href(prev)}"><small>Previous</small>${esc(prev.title)}</a>` : '<span></span>'}
   ${next ? `<a class="card docs-pager__next" href="${href(next)}"><small>Next</small>${esc(next.title)}</a>` : '<span></span>'}
 </nav>
-<footer><a href="/">Mullo</a> · <a href="/docs">Docs</a> · <a href="/manage">Manage subscription</a></footer>
+<footer><a href="/">Mullo</a> · <a href="/docs">Docs</a> · <a href="/manage">Manage subscription</a> · <a href="${SOURCE_URL}">Source code</a></footer>
 </article>
 </div>
 </body></html>`;

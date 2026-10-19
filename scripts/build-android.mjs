@@ -2,6 +2,7 @@
 // bundled inside a locked-down WebView, plus the watch recorder.
 //
 //   node scripts/build-android.mjs            → debug APKs
+//   node scripts/build-android.mjs release    → Play bundles (.aab), signed with the upload key (S17)
 //
 // Steps: scripts/build.mjs (the same checked dist/ the web host gets) → copy
 // dist/ into android/app/src/main/assets/web/ (git-ignored) → Gradle.
@@ -44,9 +45,16 @@ const signing = watchRelease ? [
   `-Pandroid.injected.signing.store.file=${debugKey}`, '-Pandroid.injected.signing.store.password=android',
   '-Pandroid.injected.signing.key.alias=androiddebugkey', '-Pandroid.injected.signing.key.password=android',
 ] : [];
-run(join(android, win ? 'gradlew.bat' : 'gradlew'), [':app:assembleDebug', ':wear:assembleDebug', ...(watchRelease ? [':wear:assembleRelease'] : []), ...signing], {
-  cwd: android, env, shell: win,
-});
+const gradlew = join(android, win ? 'gradlew.bat' : 'gradlew');
+// Through sh: git doesn't keep gradlew's executable bit in every clone.
+const gradle = (args) => (win ? run(gradlew, args, { cwd: android, env, shell: true }) : run('sh', [gradlew, ...args], { cwd: android, env }));
+if (process.argv[2] === 'release') {
+  if (!existsSync(join(homedir(), '.mullo', 'upload.properties'))) throw new Error('No ~/.mullo/upload.properties: Play refuses unsigned bundles (android/build.gradle.kts files say what goes in it)');
+  gradle([':app:bundleRelease', ':wear:bundleRelease']);
+  console.log('Bundles: android/app/build/outputs/bundle/release/app-release.aab, android/wear/build/outputs/bundle/release/wear-release.aab');
+  process.exit(0);
+}
+gradle([':app:assembleDebug', ':wear:assembleDebug', ...(watchRelease ? [':wear:assembleRelease'] : []), ...signing]);
 console.log(`APKs: android/app/build/outputs/apk/debug/app-debug.apk, ${watchRelease
   ? 'android/wear/build/outputs/apk/release/wear-release.apk (install this one on the watch)'
   : 'android/wear/build/outputs/apk/debug/wear-debug.apk (no ~/.android/debug.keystore, so no release watch build)'}`);

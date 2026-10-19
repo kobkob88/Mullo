@@ -1,5 +1,14 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
+}
+
+// Play upload key (S17), kept off the repo: ~/.mullo/upload.properties with storeFile,
+// storePassword, keyAlias, keyPassword. Without it, release builds come out unsigned.
+val upload = Properties().apply {
+    val f = file("${System.getProperty("user.home")}/.mullo/upload.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
 }
 
 android {
@@ -9,8 +18,19 @@ android {
         applicationId = "app.mullo"
         minSdk = 30
         targetSdk = 36
-        versionCode = 2 // raise for every install that should look new (launchers cache the icon per code)
+        versionCode = 12 // raise for every upload; Play wants phone and watch codes apart (phone even, watch odd)
         versionName = "0.1"
+    }
+    signingConfigs {
+        if (upload.isNotEmpty()) create("release") {
+            storeFile = file(upload.getProperty("storeFile"))
+            storePassword = upload.getProperty("storePassword")
+            keyAlias = upload.getProperty("keyAlias")
+            keyPassword = upload.getProperty("keyPassword")
+        }
+    }
+    buildTypes {
+        release { signingConfigs.findByName("release")?.let { signingConfig = it } }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

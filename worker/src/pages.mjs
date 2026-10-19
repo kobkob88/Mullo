@@ -102,6 +102,10 @@ let h = 5381;
 for (let i = 0; i < CSS.length; i++) h = ((h * 33) ^ CSS.charCodeAt(i)) >>> 0;
 export const STYLE_HREF = `/style.css?v=${h.toString(36)}`;
 
+// Mullo's source code (S60 A8): the public copy, AGPL. Linked from the site and docs footers, never
+// inside the Privacy Policy or Terms text (a change there asks everyone to accept again).
+export const SOURCE_URL = 'https://github.com/kobkob88/Mullo';
+
 export function page(title, body) {
   return `<!doctype html>
 <html lang="en"><head>
@@ -110,7 +114,7 @@ export function page(title, body) {
 </head><body><main>
 <header class="top"><a class="brand" href="/">${MARK}Mullo</a><a class="btn btn--ghost btn--small" href="/app/">Open Mullo</a></header>
 ${body}
-<footer><a href="/">Mullo</a> · <a href="/app/">Open Mullo</a> · <a href="/docs">Docs</a> · <a href="/manage">Manage subscription</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></footer>
+<footer><a href="/">Mullo</a> · <a href="/app/">Open Mullo</a> · <a href="/docs">Docs</a> · <a href="/manage">Manage subscription</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="${SOURCE_URL}">Source code</a></footer>
 </main></body></html>`;
 }
 

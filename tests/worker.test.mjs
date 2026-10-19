@@ -477,6 +477,9 @@ test('privacy and terms: served as locked-down pages, linked from every page foo
   const landing = await (await call('/')).text();
   assert.match(landing, /href="\/privacy"/);
   assert.match(landing, /href="\/terms"/);
+  // S60 A8: the source code, from the site and the docs (not from the Privacy Policy text or Terms text).
+  assert.match(landing, /<footer>.*href="https:\/\/github\.com\/[^/"]+\/Mullo">Source code<\/a>/);
+  assert.match(await (await call('/docs')).text(), /<footer>.*>Source code<\/a><\/footer>/);
 });
 
 test('security.txt names a contact and expires', async () => {
